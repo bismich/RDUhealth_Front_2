@@ -138,6 +138,29 @@ export default function PublicChatPage() {
       return;
     }
 
+    // Try to find matching practice ID from sources
+    let practiceId: number | null = null;
+    const matchingSource = sources.find((source) => {
+      if (!source.website) return false;
+
+      // Normalize URLs for comparison
+      const sourceUrl = source.website
+        .replace(/^https?:\/\//, "")
+        .replace(/\/$/, "");
+      const clickedUrl = url.replace(/^https?:\/\//, "").replace(/\/$/, "");
+
+      // Check if clicked URL contains the source URL or vice versa
+      return clickedUrl.includes(sourceUrl) || sourceUrl.includes(clickedUrl);
+    });
+    if (matchingSource) {
+      practiceId = matchingSource.practice_id;
+      console.log(
+        `Markdown link matched to practice: ${matchingSource.practice_name} (ID: ${practiceId})`
+      );
+    } else {
+      console.log(`Markdown link not matched to any practice: ${url}`);
+    }
+
     try {
       const response = await fetch(
         `${apiBase}/api/v1/analytics/public/analytics/url-click`,
@@ -146,7 +169,7 @@ export default function PublicChatPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             url: url,
-            practiceId: null, // We don't have practice ID for markdown links
+            practiceId: practiceId,
             sessionId,
           }),
         }
