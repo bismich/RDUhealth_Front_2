@@ -13,6 +13,12 @@ type Source = {
   practice_id: number;
   practice_name: string;
   website: string;
+  address: string;
+  city: string;
+  state: string;
+  zip: string;
+  primary_location: string;
+  other_location: string;
   similarity_score: number;
 };
 
@@ -357,24 +363,66 @@ export default function PublicChatPage() {
                     className="rounded-2xl bg-white p-4 shadow"
                   >
                     <div className="flex items-start justify-between gap-3">
-                      <div>
+                      <div className="flex-1">
                         <p className="text-sm font-semibold text-slate-900">
                           {index + 1}. {source.practice_name}
                         </p>
                         <p className="text-xs text-slate-500">
                           Match: {Math.round(source.similarity_score * 100)}%
                         </p>
+
+                        {/* Address and Location Information */}
+                        {(source.address ||
+                          source.city ||
+                          source.state ||
+                          source.zip) && (
+                          <div className="mt-2 text-xs text-slate-600">
+                            <p className="font-medium text-slate-700">
+                              Location:
+                            </p>
+                            {source.address && <p>{source.address}</p>}
+                            {(source.city || source.state || source.zip) && (
+                              <p>
+                                {[source.city, source.state, source.zip]
+                                  .filter(Boolean)
+                                  .join(", ")}
+                              </p>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Primary Location */}
+                        {source.primary_location && (
+                          <div className="mt-1 text-xs text-slate-600">
+                            <span className="font-medium text-slate-700">
+                              Primary Area:
+                            </span>{" "}
+                            {source.primary_location}
+                          </div>
+                        )}
+
+                        {/* Other Locations */}
+                        {source.other_location && (
+                          <div className="mt-1 text-xs text-slate-600">
+                            <span className="font-medium text-slate-700">
+                              Other Locations:
+                            </span>{" "}
+                            {source.other_location}
+                          </div>
+                        )}
                       </div>
+
                       {source.website && (
                         <button
                           type="button"
                           onClick={() => handleSourceClick(source)}
-                          className="text-xs font-semibold text-blue-600 hover:underline"
+                          className="text-xs font-semibold text-blue-600 hover:underline whitespace-nowrap"
                         >
                           Visit site
                         </button>
                       )}
                     </div>
+
                     {source.website && (
                       <div className="mt-3 flex flex-wrap gap-3 text-xs text-slate-500">
                         <span>{getHostname(source.website)}</span>

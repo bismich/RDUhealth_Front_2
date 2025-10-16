@@ -16,15 +16,15 @@ type Practice = {
   phone_number: string;
   email: string;
   credentials_and_npi: string;
-  practice_type: string;
+  practice_type: string[];
   primary_location: string;
   other_location: string;
   offer_medication_management: boolean | null;
   types_of_therapy: string;
   services: string;
   practice_details: string;
-  patient_types: string;
-  ethnicity: string;
+  patient_types: string[];
+  ethnicity: string[];
   gender_identity: string;
   additional_demographic_details: string;
   accepted_insurance_plans: string;
@@ -56,15 +56,15 @@ type PracticeFormState = {
   phone_number: string;
   email: string;
   credentials_and_npi: string;
-  practice_type: string;
+  practice_type: string[];
   primary_location: string;
   other_location: string;
   offer_medication_management: boolean | null;
   types_of_therapy: string;
   services: string;
   practice_details: string;
-  patient_types: string;
-  ethnicity: string;
+  patient_types: string[];
+  ethnicity: string[];
   gender_identity: string;
   additional_demographic_details: string;
   accepted_insurance_plans: string;
@@ -125,15 +125,15 @@ const initialFormState = (): PracticeFormState => ({
   phone_number: "",
   email: "",
   credentials_and_npi: "",
-  practice_type: "",
+  practice_type: [],
   primary_location: "",
   other_location: "",
   offer_medication_management: null,
   types_of_therapy: "",
   services: "",
   practice_details: "",
-  patient_types: "",
-  ethnicity: "",
+  patient_types: [],
+  ethnicity: [],
   gender_identity: "",
   additional_demographic_details: "",
   accepted_insurance_plans: "",
@@ -152,6 +152,24 @@ const initialFormState = (): PracticeFormState => ({
   embeddingUpdatedAt: null,
   dirty: false,
 });
+
+// Helper functions for multi-select handling
+const parseArrayField = (value: string | string[]): string[] => {
+  if (Array.isArray(value)) return value;
+  if (typeof value === "string") {
+    return value
+      ? value
+          .split(",")
+          .map((item) => item.trim())
+          .filter(Boolean)
+      : [];
+  }
+  return [];
+};
+
+const formatArrayField = (value: string[]): string => {
+  return value.join(", ");
+};
 
 export default function DashboardPage() {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
@@ -247,15 +265,15 @@ export default function DashboardPage() {
         phone_number: existing.phone_number ?? "",
         email: existing.email ?? "",
         credentials_and_npi: existing.credentials_and_npi ?? "",
-        practice_type: existing.practice_type ?? "",
+        practice_type: parseArrayField(existing.practice_type ?? ""),
         primary_location: existing.primary_location ?? "",
         other_location: existing.other_location ?? "",
         offer_medication_management: existing.offer_medication_management,
         types_of_therapy: existing.types_of_therapy ?? "",
         services: existing.services ?? "",
         practice_details: existing.practice_details ?? "",
-        patient_types: existing.patient_types ?? "",
-        ethnicity: existing.ethnicity ?? "",
+        patient_types: parseArrayField(existing.patient_types ?? ""),
+        ethnicity: parseArrayField(existing.ethnicity ?? ""),
         gender_identity: existing.gender_identity ?? "",
         additional_demographic_details:
           existing.additional_demographic_details ?? "",
@@ -296,15 +314,15 @@ export default function DashboardPage() {
         phone_number: formState.phone_number,
         email: formState.email,
         credentials_and_npi: formState.credentials_and_npi,
-        practice_type: formState.practice_type,
+        practice_type: formatArrayField(formState.practice_type),
         primary_location: formState.primary_location,
         other_location: formState.other_location,
         offer_medication_management: formState.offer_medication_management,
         types_of_therapy: formState.types_of_therapy,
         services: formState.services,
         practice_details: formState.practice_details,
-        patient_types: formState.patient_types,
-        ethnicity: formState.ethnicity,
+        patient_types: formatArrayField(formState.patient_types),
+        ethnicity: formatArrayField(formState.ethnicity),
         gender_identity: formState.gender_identity,
         additional_demographic_details:
           formState.additional_demographic_details,
@@ -378,6 +396,23 @@ export default function DashboardPage() {
     []
   );
 
+  const updateArrayField = useCallback(
+    (
+      field: "practice_type" | "patient_types" | "ethnicity",
+      value: string,
+      checked: boolean
+    ) => {
+      setFormState((state) => {
+        const currentArray = state[field];
+        const newArray = checked
+          ? [...currentArray, value]
+          : currentArray.filter((item) => item !== value);
+        return { ...state, [field]: newArray, dirty: true };
+      });
+    },
+    []
+  );
+
   const handleNewPractice = useCallback(() => {
     if (canCreateAnother) {
       setLimitNotice(null);
@@ -410,15 +445,15 @@ export default function DashboardPage() {
         phone_number: existing.phone_number ?? "",
         email: existing.email ?? "",
         credentials_and_npi: existing.credentials_and_npi ?? "",
-        practice_type: existing.practice_type ?? "",
+        practice_type: parseArrayField(existing.practice_type ?? ""),
         primary_location: existing.primary_location ?? "",
         other_location: existing.other_location ?? "",
         offer_medication_management: existing.offer_medication_management,
         types_of_therapy: existing.types_of_therapy ?? "",
         services: existing.services ?? "",
         practice_details: existing.practice_details ?? "",
-        patient_types: existing.patient_types ?? "",
-        ethnicity: existing.ethnicity ?? "",
+        patient_types: parseArrayField(existing.patient_types ?? ""),
+        ethnicity: parseArrayField(existing.ethnicity ?? ""),
         gender_identity: existing.gender_identity ?? "",
         additional_demographic_details:
           existing.additional_demographic_details ?? "",
@@ -835,11 +870,14 @@ export default function DashboardPage() {
                   <label className="flex items-center gap-2">
                     <input
                       type="checkbox"
-                      checked={formState.practice_type === "psychiatry_only"}
+                      checked={formState.practice_type.includes(
+                        "psychiatry_only"
+                      )}
                       onChange={(event) =>
-                        updateField(
+                        updateArrayField(
                           "practice_type",
-                          event.target.checked ? "psychiatry_only" : ""
+                          "psychiatry_only",
+                          event.target.checked
                         )
                       }
                       className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
@@ -851,11 +889,12 @@ export default function DashboardPage() {
                   <label className="flex items-center gap-2">
                     <input
                       type="checkbox"
-                      checked={formState.practice_type === "therapy_only"}
+                      checked={formState.practice_type.includes("therapy_only")}
                       onChange={(event) =>
-                        updateField(
+                        updateArrayField(
                           "practice_type",
-                          event.target.checked ? "therapy_only" : ""
+                          "therapy_only",
+                          event.target.checked
                         )
                       }
                       className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
@@ -865,11 +904,14 @@ export default function DashboardPage() {
                   <label className="flex items-center gap-2">
                     <input
                       type="checkbox"
-                      checked={formState.practice_type === "psychiatry_therapy"}
+                      checked={formState.practice_type.includes(
+                        "psychiatry_therapy"
+                      )}
                       onChange={(event) =>
-                        updateField(
+                        updateArrayField(
                           "practice_type",
-                          event.target.checked ? "psychiatry_therapy" : ""
+                          "psychiatry_therapy",
+                          event.target.checked
                         )
                       }
                       className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
@@ -881,11 +923,12 @@ export default function DashboardPage() {
                   <label className="flex items-center gap-2">
                     <input
                       type="checkbox"
-                      checked={formState.practice_type === "other"}
+                      checked={formState.practice_type.includes("other")}
                       onChange={(event) =>
-                        updateField(
+                        updateArrayField(
                           "practice_type",
-                          event.target.checked ? "other" : ""
+                          "other",
+                          event.target.checked
                         )
                       }
                       className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
@@ -1052,28 +1095,65 @@ export default function DashboardPage() {
                   What types of patients does your practice serve? (Select all
                   that apply) *
                 </span>
-                <input
-                  value={formState.patient_types}
-                  onChange={(event) =>
-                    updateField("patient_types", event.target.value)
-                  }
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="Toddler, Children, Adults, etc. (comma separated)"
-                />
+                <div className="space-y-2">
+                  {[
+                    "Toddler",
+                    "Children",
+                    "Preteens & Teens",
+                    "Young Adults (18-24)",
+                    "Adults (25-64)",
+                    "Elders (65+)",
+                  ].map((option) => (
+                    <label key={option} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={formState.patient_types.includes(option)}
+                        onChange={(event) =>
+                          updateArrayField(
+                            "patient_types",
+                            option,
+                            event.target.checked
+                          )
+                        }
+                        className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                      />
+                      <span className="text-sm text-slate-700">{option}</span>
+                    </label>
+                  ))}
+                </div>
               </label>
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   Ethnicity (optional) (Select all that apply to the members of
                   your practice.)
                 </span>
-                <input
-                  value={formState.ethnicity}
-                  onChange={(event) =>
-                    updateField("ethnicity", event.target.value)
-                  }
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="White, Black, Hispanic, etc. (comma separated)"
-                />
+                <div className="space-y-2">
+                  {[
+                    "White",
+                    "Black / African American",
+                    "Hispanic and Latino",
+                    "Asian",
+                    "Native American",
+                    "Pacific Islander",
+                    "Other",
+                  ].map((option) => (
+                    <label key={option} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={formState.ethnicity.includes(option)}
+                        onChange={(event) =>
+                          updateArrayField(
+                            "ethnicity",
+                            option,
+                            event.target.checked
+                          )
+                        }
+                        className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                      />
+                      <span className="text-sm text-slate-700">{option}</span>
+                    </label>
+                  ))}
+                </div>
               </label>
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
@@ -1472,11 +1552,14 @@ export default function DashboardPage() {
                   <label className="flex items-center gap-2">
                     <input
                       type="checkbox"
-                      checked={formState.practice_type === "psychiatry_only"}
+                      checked={formState.practice_type.includes(
+                        "psychiatry_only"
+                      )}
                       onChange={(event) =>
-                        updateField(
+                        updateArrayField(
                           "practice_type",
-                          event.target.checked ? "psychiatry_only" : ""
+                          "psychiatry_only",
+                          event.target.checked
                         )
                       }
                       className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
@@ -1488,11 +1571,12 @@ export default function DashboardPage() {
                   <label className="flex items-center gap-2">
                     <input
                       type="checkbox"
-                      checked={formState.practice_type === "therapy_only"}
+                      checked={formState.practice_type.includes("therapy_only")}
                       onChange={(event) =>
-                        updateField(
+                        updateArrayField(
                           "practice_type",
-                          event.target.checked ? "therapy_only" : ""
+                          "therapy_only",
+                          event.target.checked
                         )
                       }
                       className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
@@ -1502,11 +1586,14 @@ export default function DashboardPage() {
                   <label className="flex items-center gap-2">
                     <input
                       type="checkbox"
-                      checked={formState.practice_type === "psychiatry_therapy"}
+                      checked={formState.practice_type.includes(
+                        "psychiatry_therapy"
+                      )}
                       onChange={(event) =>
-                        updateField(
+                        updateArrayField(
                           "practice_type",
-                          event.target.checked ? "psychiatry_therapy" : ""
+                          "psychiatry_therapy",
+                          event.target.checked
                         )
                       }
                       className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
@@ -1518,11 +1605,12 @@ export default function DashboardPage() {
                   <label className="flex items-center gap-2">
                     <input
                       type="checkbox"
-                      checked={formState.practice_type === "other"}
+                      checked={formState.practice_type.includes("other")}
                       onChange={(event) =>
-                        updateField(
+                        updateArrayField(
                           "practice_type",
-                          event.target.checked ? "other" : ""
+                          "other",
+                          event.target.checked
                         )
                       }
                       className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
@@ -1689,28 +1777,65 @@ export default function DashboardPage() {
                   What types of patients does your practice serve? (Select all
                   that apply) *
                 </span>
-                <input
-                  value={formState.patient_types}
-                  onChange={(event) =>
-                    updateField("patient_types", event.target.value)
-                  }
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="Toddler, Children, Adults, etc. (comma separated)"
-                />
+                <div className="space-y-2">
+                  {[
+                    "Toddler",
+                    "Children",
+                    "Preteens & Teens",
+                    "Young Adults (18-24)",
+                    "Adults (25-64)",
+                    "Elders (65+)",
+                  ].map((option) => (
+                    <label key={option} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={formState.patient_types.includes(option)}
+                        onChange={(event) =>
+                          updateArrayField(
+                            "patient_types",
+                            option,
+                            event.target.checked
+                          )
+                        }
+                        className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                      />
+                      <span className="text-sm text-slate-700">{option}</span>
+                    </label>
+                  ))}
+                </div>
               </label>
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   Ethnicity (optional) (Select all that apply to the members of
                   your practice.)
                 </span>
-                <input
-                  value={formState.ethnicity}
-                  onChange={(event) =>
-                    updateField("ethnicity", event.target.value)
-                  }
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="White, Black, Hispanic, etc. (comma separated)"
-                />
+                <div className="space-y-2">
+                  {[
+                    "White",
+                    "Black / African American",
+                    "Hispanic and Latino",
+                    "Asian",
+                    "Native American",
+                    "Pacific Islander",
+                    "Other",
+                  ].map((option) => (
+                    <label key={option} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={formState.ethnicity.includes(option)}
+                        onChange={(event) =>
+                          updateArrayField(
+                            "ethnicity",
+                            option,
+                            event.target.checked
+                          )
+                        }
+                        className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                      />
+                      <span className="text-sm text-slate-700">{option}</span>
+                    </label>
+                  ))}
+                </div>
               </label>
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
@@ -2053,7 +2178,7 @@ export default function DashboardPage() {
                   Practice Type
                 </span>
                 <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
-                  {formState.practice_type || "Not set"}
+                  {formatArrayField(formState.practice_type) || "Not set"}
                 </div>
               </div>
               <div className="flex flex-col gap-2">
@@ -2116,7 +2241,7 @@ export default function DashboardPage() {
                   that apply) *
                 </span>
                 <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
-                  {formState.patient_types || "Not set"}
+                  {formatArrayField(formState.patient_types) || "Not set"}
                 </div>
               </div>
               <div className="flex flex-col gap-2">
@@ -2124,7 +2249,7 @@ export default function DashboardPage() {
                   Ethnicity
                 </span>
                 <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
-                  {formState.ethnicity || "Not set"}
+                  {formatArrayField(formState.ethnicity) || "Not set"}
                 </div>
               </div>
               <div className="flex flex-col gap-2">
