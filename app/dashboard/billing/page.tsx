@@ -11,15 +11,14 @@ type SubscriptionResponse = {
   status: string;
   trialEndsAt: string | null;
   currentPeriodEnd: string | null;
-  ctaSpots: number;
   billingEnforcementDate: string;
   trialDays: number;
   stripePublishableKey?: string;
 };
 
 const planDescriptions: Record<SubscriptionResponse["plan"], string> = {
-  fixed: "Flat monthly rate with unlimited CTA tracking.",
-  cta: "Dynamic pricing based on the number of CTA spots you activate.",
+  fixed: "Flat monthly rate with unlimited CTA tracking for the main platform.",
+  cta: "One-time payment for external CTA services based on the number of spots.",
 };
 
 export default function BillingPage() {
@@ -27,8 +26,10 @@ export default function BillingPage() {
   const { accessToken } = useAppSelector((state) => state.auth);
   const [selectedPlan, setSelectedPlan] =
     useState<SubscriptionResponse["plan"]>("fixed");
-  const [ctaSpots, setCtaSpots] = useState<number>(3);
+  const [ctaSpots, setCtaSpots] = useState<number>(1);
   const [message, setMessage] = useState<string | null>(null);
+  const [isCheckoutLoading, setIsCheckoutLoading] = useState<boolean>(false);
+  const [isPortalLoading, setIsPortalLoading] = useState<boolean>(false);
   const canQuery = Boolean(baseUrl && accessToken);
 
   const fetcher = useCallback(
@@ -54,7 +55,6 @@ export default function BillingPage() {
     {
       onSuccess(data) {
         setSelectedPlan(data.plan);
-        setCtaSpots(data.ctaSpots || 3);
       },
     }
   );
@@ -97,52 +97,79 @@ export default function BillingPage() {
   const handleCheckout = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
-      if (!canQuery) {
+      if (!canQuery || isCheckoutLoading) {
         return;
       }
+
+      setIsCheckoutLoading(true);
       setMessage(null);
-      const response = await fetch(`${baseUrl}/api/v1/billing/checkout`, {
+
+      const requestData =
+        selectedPlan === "cta"
+          ? { plan: selectedPlan, ctaSpots: ctaSpots }
+          : { plan: selectedPlan };
+
+      try {
+        const response = await fetch(`${baseUrl}/api/v1/billing/checkout`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestData),
+        });
+
+        if (!response.ok) {
+          const payload = await response.json().catch(() => ({}));
+          setMessage(payload.detail ?? "Unable to start checkout session");
+          return;
+        }
+
+        const payload = await response.json();
+        if (payload.checkoutUrl) {
+          window.location.href = payload.checkoutUrl as string;
+        }
+      } catch (error) {
+        console.error("Fetch error:", error);
+        setMessage("Network error occurred");
+      } finally {
+        setIsCheckoutLoading(false);
+      }
+    },
+    [accessToken, baseUrl, canQuery, selectedPlan, ctaSpots, isCheckoutLoading]
+  );
+
+  const handlePortal = useCallback(async () => {
+    if (!canQuery || isPortalLoading) {
+      return;
+    }
+
+    setIsPortalLoading(true);
+
+    try {
+      const response = await fetch(`${baseUrl}/api/v1/billing/portal`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ plan: selectedPlan, ctaSpots }),
       });
       if (!response.ok) {
         const payload = await response.json().catch(() => ({}));
-        setMessage(payload.detail ?? "Unable to start checkout session");
+        setMessage(payload.detail ?? "Unable to open billing portal");
         return;
       }
       const payload = await response.json();
-      if (payload.checkoutUrl) {
-        window.location.href = payload.checkoutUrl as string;
+      if (payload.portalUrl) {
+        window.location.href = payload.portalUrl as string;
       }
-    },
-    [accessToken, baseUrl, canQuery, ctaSpots, selectedPlan]
-  );
-
-  const handlePortal = useCallback(async () => {
-    if (!canQuery) {
-      return;
+    } catch (error) {
+      console.error("Portal error:", error);
+      setMessage("Network error occurred");
+    } finally {
+      setIsPortalLoading(false);
     }
-    const response = await fetch(`${baseUrl}/api/v1/billing/portal`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
-    });
-    if (!response.ok) {
-      const payload = await response.json().catch(() => ({}));
-      setMessage(payload.detail ?? "Unable to open billing portal");
-      return;
-    }
-    const payload = await response.json();
-    if (payload.portalUrl) {
-      window.location.href = payload.portalUrl as string;
-    }
-  }, [accessToken, baseUrl, canQuery]);
+  }, [accessToken, baseUrl, canQuery, isPortalLoading]);
 
   return (
     <div className="flex flex-col gap-8">
@@ -222,7 +249,7 @@ export default function BillingPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <span className="text-lg font-semibold text-slate-900">
-                    {plan === "fixed" ? "Fixed" : "CTA-Based"}
+                    {plan === "fixed" ? "Fixed Plan" : "CTA Service"}
                   </span>
                   <p className="text-sm text-slate-600">
                     {planDescriptions[plan as SubscriptionResponse["plan"]]}
@@ -240,10 +267,10 @@ export default function BillingPage() {
                 />
               </div>
               {plan === "cta" && selectedPlan === "cta" && (
-                <label className="flex flex-col gap-2">
-                  <span className="text-sm font-medium text-slate-700">
-                    CTA spots
-                  </span>
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-medium text-slate-700">
+                    CTA Spots
+                  </label>
                   <input
                     type="number"
                     min={1}
@@ -253,7 +280,7 @@ export default function BillingPage() {
                     }
                     className="w-24 rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-400 focus:outline-none focus:ring"
                   />
-                </label>
+                </div>
               )}
             </label>
           ))}
@@ -266,10 +293,17 @@ export default function BillingPage() {
           </span>
           <button
             type="submit"
-            disabled={isLoading || !canQuery}
+            disabled={isCheckoutLoading || !canQuery}
             className="rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-blue-300"
           >
-            {isLoading ? "Loading…" : "Start checkout"}
+            {isCheckoutLoading ? (
+              <div className="flex items-center gap-2">
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                <span>Processing...</span>
+              </div>
+            ) : (
+              "Start checkout"
+            )}
           </button>
         </div>
       </form>
@@ -285,9 +319,17 @@ export default function BillingPage() {
         <button
           type="button"
           onClick={handlePortal}
-          className="mt-4 inline-flex items-center justify-center rounded-full border border-slate-900 px-5 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-900 hover:text-white"
+          disabled={isPortalLoading || !canQuery}
+          className="mt-4 inline-flex items-center justify-center rounded-full border border-slate-900 px-5 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-900 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Open billing portal
+          {isPortalLoading ? (
+            <div className="flex items-center gap-2">
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-900 border-t-transparent"></div>
+              <span>Opening...</span>
+            </div>
+          ) : (
+            "Open billing portal"
+          )}
         </button>
       </section>
     </div>

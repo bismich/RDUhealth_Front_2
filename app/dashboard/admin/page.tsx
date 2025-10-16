@@ -185,6 +185,10 @@ type AdminStats = {
   total_url_clicks: number;
   total_contact_submissions: number;
   unhandled_contact_submissions: number;
+  total_cta_payments: number;
+  completed_cta_payments: number;
+  pending_cta_payments: number;
+  total_cta_revenue: number;
   revenue_data: {
     monthly_revenue: number;
     annual_revenue: number;
@@ -294,6 +298,16 @@ export default function AdminDashboardPage() {
         color: "red",
         href: "/dashboard/admin/contact-submissions",
       },
+      {
+        title: "CTA Payments",
+        value: stats.total_cta_payments,
+        subtitle: `${
+          stats.completed_cta_payments
+        } completed, $${stats.total_cta_revenue.toFixed(2)} revenue`,
+        icon: "💰",
+        color: "emerald",
+        href: "/dashboard/admin/cta-payments",
+      },
     ];
   }, [stats]);
 
@@ -337,7 +351,7 @@ export default function AdminDashboardPage() {
       {/* Stats Grid */}
       <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {isLoading
-          ? Array.from({ length: 7 }).map((_, i) => (
+          ? Array.from({ length: 8 }).map((_, i) => (
               <div
                 key={i}
                 className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
@@ -506,7 +520,7 @@ export default function AdminDashboardPage() {
         <h3 className="text-lg font-semibold text-slate-900 mb-4">
           Quick Actions
         </h3>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           <Link
             href="/dashboard/admin/users"
             className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 transition hover:bg-slate-100"
@@ -606,6 +620,31 @@ export default function AdminDashboardPage() {
             <div>
               <h4 className="font-medium text-slate-900">Contact Inbox</h4>
               <p className="text-sm text-slate-500">Handle inquiries</p>
+            </div>
+          </Link>
+
+          <Link
+            href="/dashboard/admin/cta-payments"
+            className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 transition hover:bg-slate-100"
+          >
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-100">
+              <svg
+                className="h-5 w-5 text-emerald-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+                />
+              </svg>
+            </div>
+            <div>
+              <h4 className="font-medium text-slate-900">CTA Payments</h4>
+              <p className="text-sm text-slate-500">Manage external payments</p>
             </div>
           </Link>
         </div>

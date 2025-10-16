@@ -16,7 +16,6 @@ type Subscription = {
   status: "active" | "trialing" | "past_due" | "canceled";
   trial_ends_at: string | null;
   current_period_end: string | null;
-  cta_spots: number;
   stripe_price_id: string;
   created_at: string;
   updated_at: string;
@@ -176,7 +175,7 @@ export default function SubscriptionsPage() {
             >
               <option value="">All Plans</option>
               <option value="fixed">Fixed</option>
-              <option value="cta">CTA-Based</option>
+              <option value="cta">CTA Service</option>
             </select>
           </div>
           <div>
@@ -225,9 +224,6 @@ export default function SubscriptionsPage() {
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                       Period
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                      CTA Spots
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                       Created
@@ -287,11 +283,6 @@ export default function SubscriptionsPage() {
                             </div>
                           )}
                         </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-sm font-medium text-slate-900">
-                          {subscription.cta_spots}
-                        </span>
                       </td>
                       <td className="px-6 py-4">
                         <div className="text-sm text-slate-600">

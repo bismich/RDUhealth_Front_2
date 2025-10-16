@@ -68,6 +68,11 @@ function AdminDropdown({ pathname }: { pathname: string }) {
       label: "Contact Inbox",
       icon: "📧",
     },
+    {
+      href: "/dashboard/admin/cta-payments",
+      label: "CTA Payments",
+      icon: "💰",
+    },
   ];
 
   const isAdminActive = adminLinks.some((link) => pathname === link.href);
