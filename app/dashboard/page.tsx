@@ -993,8 +993,10 @@ export default function DashboardPage() {
                   onChange={(event) => {
                     const value =
                       event.target.value === ""
-                        ? null
-                        : event.target.value === "true";
+                        ? ""
+                        : event.target.value === "true"
+                        ? "true"
+                        : "false";
                     updateField("offer_medication_management", value);
                   }}
                   className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
@@ -1144,7 +1146,7 @@ export default function DashboardPage() {
                   onChange={(event) =>
                     updateField(
                       "is_accepting_new_patients",
-                      event.target.value === "true"
+                      event.target.value === "true" ? "true" : "false"
                     )
                   }
                   className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
@@ -1163,7 +1165,7 @@ export default function DashboardPage() {
                   onChange={(event) =>
                     updateField(
                       "is_ada_accessible",
-                      event.target.value === "true"
+                      event.target.value === "true" ? "true" : "false"
                     )
                   }
                   className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
@@ -1628,8 +1630,10 @@ export default function DashboardPage() {
                   onChange={(event) => {
                     const value =
                       event.target.value === ""
-                        ? null
-                        : event.target.value === "true";
+                        ? ""
+                        : event.target.value === "true"
+                        ? "true"
+                        : "false";
                     updateField("offer_medication_management", value);
                   }}
                   className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
@@ -1779,7 +1783,7 @@ export default function DashboardPage() {
                   onChange={(event) =>
                     updateField(
                       "is_accepting_new_patients",
-                      event.target.value === "true"
+                      event.target.value === "true" ? "true" : "false"
                     )
                   }
                   className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
@@ -1798,7 +1802,7 @@ export default function DashboardPage() {
                   onChange={(event) =>
                     updateField(
                       "is_ada_accessible",
-                      event.target.value === "true"
+                      event.target.value === "true" ? "true" : "false"
                     )
                   }
                   className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
