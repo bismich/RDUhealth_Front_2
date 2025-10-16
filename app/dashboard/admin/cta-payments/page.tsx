@@ -10,7 +10,7 @@ type CTAPayment = {
   customer_email: string;
   customer_name: string;
   customer_phone: string;
-  amount: number;
+  amount: string;
   currency: string;
   cta_spots: number;
   status: "pending" | "completed" | "failed" | "refunded";
@@ -222,8 +222,8 @@ export default function CTAPaymentsPage() {
                       <td className="px-6 py-4">
                         <div className="text-sm font-medium text-slate-900">
                           {payment.currency}{" "}
-                          {typeof payment.amount === "number"
-                            ? payment.amount.toFixed(2)
+                          {payment.amount
+                            ? parseFloat(`${payment.amount}`).toFixed(2)
                             : "0.00"}
                         </div>
                       </td>

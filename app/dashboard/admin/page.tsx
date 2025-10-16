@@ -301,9 +301,11 @@ export default function AdminDashboardPage() {
       {
         title: "CTA Payments",
         value: stats.total_cta_payments,
-        subtitle: `${
-          stats.completed_cta_payments
-        } completed, $${stats.total_cta_revenue.toFixed(2)} revenue`,
+        subtitle: `${stats.completed_cta_payments} completed, $${
+          typeof stats.total_cta_revenue === "number"
+            ? stats.total_cta_revenue.toFixed(2)
+            : "0.00"
+        } revenue`,
         icon: "💰",
         color: "emerald",
         href: "/dashboard/admin/cta-payments",

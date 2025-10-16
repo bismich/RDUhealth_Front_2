@@ -94,10 +94,22 @@ export default function BillingPage() {
     );
   }, [subscription]);
 
+  const isFixedPlanActive = useMemo(() => {
+    return subscription?.plan === "fixed" && subscription?.status === "active";
+  }, [subscription]);
+
+  const canSelectFixedPlan = useMemo(() => {
+    return !isFixedPlanActive;
+  }, [isFixedPlanActive]);
+
   const handleCheckout = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
-      if (!canQuery || isCheckoutLoading) {
+      if (
+        !canQuery ||
+        isCheckoutLoading ||
+        (selectedPlan === "fixed" && !canSelectFixedPlan)
+      ) {
         return;
       }
 
@@ -136,7 +148,15 @@ export default function BillingPage() {
         setIsCheckoutLoading(false);
       }
     },
-    [accessToken, baseUrl, canQuery, selectedPlan, ctaSpots, isCheckoutLoading]
+    [
+      accessToken,
+      baseUrl,
+      canQuery,
+      selectedPlan,
+      ctaSpots,
+      isCheckoutLoading,
+      canSelectFixedPlan,
+    ]
   );
 
   const handlePortal = useCallback(async () => {
@@ -237,53 +257,74 @@ export default function BillingPage() {
       >
         <h2 className="text-2xl font-semibold text-slate-900">Select a plan</h2>
         <div className="grid gap-4 md:grid-cols-2">
-          {["fixed", "cta"].map((plan) => (
-            <label
-              key={plan}
-              className={`flex cursor-pointer flex-col gap-3 rounded-xl border p-4 transition ${
-                selectedPlan === plan
-                  ? "border-blue-500 bg-blue-50"
-                  : "border-slate-200 bg-white hover:border-blue-200"
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <span className="text-lg font-semibold text-slate-900">
-                    {plan === "fixed" ? "Fixed Plan" : "CTA Service"}
-                  </span>
-                  <p className="text-sm text-slate-600">
-                    {planDescriptions[plan as SubscriptionResponse["plan"]]}
-                  </p>
-                </div>
-                <input
-                  type="radio"
-                  name="plan"
-                  value={plan}
-                  checked={selectedPlan === plan}
-                  onChange={() =>
-                    setSelectedPlan(plan as SubscriptionResponse["plan"])
-                  }
-                  className="h-4 w-4"
-                />
-              </div>
-              {plan === "cta" && selectedPlan === "cta" && (
-                <div className="flex flex-col gap-2">
-                  <label className="text-sm font-medium text-slate-700">
-                    CTA Spots
-                  </label>
+          {["fixed", "cta"].map((plan) => {
+            const isPlanFixed = plan === "fixed";
+            const isPlanActive = isPlanFixed && isFixedPlanActive;
+            const isDisabled = isPlanFixed && !canSelectFixedPlan;
+
+            return (
+              <label
+                key={plan}
+                className={`flex flex-col gap-3 rounded-xl border p-4 transition ${
+                  isDisabled
+                    ? "cursor-not-allowed border-slate-200 bg-slate-50 opacity-60"
+                    : selectedPlan === plan
+                    ? "cursor-pointer border-blue-500 bg-blue-50"
+                    : "cursor-pointer border-slate-200 bg-white hover:border-blue-200"
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg font-semibold text-slate-900">
+                        {plan === "fixed" ? "Fixed Plan" : "CTA Service"}
+                      </span>
+                      {isPlanActive && (
+                        <span className="inline-flex items-center rounded-full bg-emerald-100 px-2 py-1 text-xs font-medium text-emerald-700">
+                          Active
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-sm text-slate-600">
+                      {planDescriptions[plan as SubscriptionResponse["plan"]]}
+                    </p>
+                    {isDisabled && (
+                      <p className="mt-1 text-xs text-amber-600">
+                        You already have an active fixed plan subscription
+                      </p>
+                    )}
+                  </div>
                   <input
-                    type="number"
-                    min={1}
-                    value={ctaSpots}
-                    onChange={(event) =>
-                      setCtaSpots(Number(event.target.value) || 1)
+                    type="radio"
+                    name="plan"
+                    value={plan}
+                    checked={selectedPlan === plan}
+                    onChange={() =>
+                      setSelectedPlan(plan as SubscriptionResponse["plan"])
                     }
-                    className="w-24 rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-400 focus:outline-none focus:ring"
+                    disabled={isDisabled}
+                    className="h-4 w-4"
                   />
                 </div>
-              )}
-            </label>
-          ))}
+                {plan === "cta" && selectedPlan === "cta" && (
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm font-medium text-slate-700">
+                      CTA Spots
+                    </label>
+                    <input
+                      type="number"
+                      min={1}
+                      value={ctaSpots}
+                      onChange={(event) =>
+                        setCtaSpots(Number(event.target.value) || 1)
+                      }
+                      className="w-24 rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-400 focus:outline-none focus:ring"
+                    />
+                  </div>
+                )}
+              </label>
+            );
+          })}
         </div>
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 text-sm text-slate-600">
           <span>
@@ -293,7 +334,11 @@ export default function BillingPage() {
           </span>
           <button
             type="submit"
-            disabled={isCheckoutLoading || !canQuery}
+            disabled={
+              isCheckoutLoading ||
+              !canQuery ||
+              (selectedPlan === "fixed" && !canSelectFixedPlan)
+            }
             className="rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-blue-300"
           >
             {isCheckoutLoading ? (
@@ -301,6 +346,8 @@ export default function BillingPage() {
                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
                 <span>Processing...</span>
               </div>
+            ) : selectedPlan === "fixed" && !canSelectFixedPlan ? (
+              "Already Active"
             ) : (
               "Start checkout"
             )}
