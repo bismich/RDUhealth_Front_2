@@ -95,7 +95,6 @@ export default function LoginPage() {
                 </h2>
                 <p className="text-sm text-slate-500">
                   Use the email and password associated with your account.
-                  account.
                 </p>
               </div>
               <form onSubmit={handleSubmit} className="flex flex-col gap-5">
