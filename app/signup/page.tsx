@@ -46,26 +46,24 @@ export default function SignupPage() {
                 setup
               </span>
               <h1 className="mt-6 text-4xl font-semibold text-slate-900">
-                Create a stunning practice profile in minutes.
+                Register your practice in minutes.
               </h1>
               <p className="mt-4 max-w-md text-base text-slate-600">
-                We&apos;ll walk you through the essentials so clients can
-                understand your approach, specialties, and how to connect.
+                Once you're in your account, simply answer a few questions about your practice—and you're all set..
               </p>
               <ul className="mt-8 space-y-4 text-sm text-slate-600">
                 <li className="flex items-start gap-3">
                   <span className="mt-1 inline-flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 text-xs font-semibold text-blue-600">
                     1
                   </span>
-                  Add your practice basics and standout differentiators.
+                  Enter your practice details accurately.
                 </li>
 
                 <li className="flex items-start gap-3">
                   <span className="mt-1 inline-flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 text-xs font-semibold text-blue-600">
                     2
                   </span>
-                  Track engagement and iterate on what resonates with your
-                  community.
+                  Be sure to highlight what sets you apart from others to ensure the best possible matches and maximum visibility
                 </li>
               </ul>
             </div>
@@ -76,8 +74,7 @@ export default function SignupPage() {
                   Create your account
                 </h2>
                 <p className="text-sm text-slate-500">
-                  Start with the credentials you use for Supabase. You can
-                  invite collaborators once your workspace is set up.
+                  If you encounter any issues during the onboarding process, please don’t hesitate to reach out. You can use the contact form located on the main page.
                 </p>
               </div>
               <form onSubmit={handleSubmit} className="flex flex-col gap-5">
