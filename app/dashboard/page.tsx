@@ -39,6 +39,10 @@ type Practice = {
   zip: string;
   fax: string;
   business_hours: string;
+  npi: string;
+  visibility_packages: string[];
+  mental_health_condition: string;
+  cta_message: string;
   public_token: string;
   embedding?: {
     updated_at?: string;
@@ -79,6 +83,10 @@ type PracticeFormState = {
   zip: string;
   fax: string;
   business_hours: string;
+  npi: string;
+  visibility_packages: string[];
+  mental_health_condition: string;
+  cta_message: string;
   public_token: string | null;
   embeddingUpdatedAt: string | null;
   dirty: boolean;
@@ -148,6 +156,10 @@ const initialFormState = (): PracticeFormState => ({
   zip: "",
   fax: "",
   business_hours: "",
+  npi: "",
+  visibility_packages: [],
+  mental_health_condition: "",
+  cta_message: "",
   public_token: null,
   embeddingUpdatedAt: null,
   dirty: false,
@@ -213,6 +225,41 @@ const getWillingToTravelDisplay = (value: string): string => {
   return travelMap[value] || value || "Not set";
 };
 
+const getVisibilityPackageDisplay = (value: string): string => {
+  const packageMap: Record<string, string> = {
+    ai_search_only: "AI Search Tool only ($20/month or $220/year per practice)",
+    cta_spot_1: "Call To Action (CTA) Spot #1 ($28 per month or $308 per year)",
+    cta_spot_2: "Call To Action (CTA) Spot #2 ($28 per month or $308 per year)",
+  };
+  return packageMap[value] || value || "Not set";
+};
+
+const getMentalHealthConditionDisplay = (value: string): string => {
+  const conditionMap: Record<string, string> = {
+    depression: "Depression (Major Depressive Disorder)",
+    generalized_anxiety: "Generalized Anxiety Disorder (GAD)",
+    social_anxiety: "Social Anxiety Disorder",
+    ptsd: "Post-Traumatic Stress Disorder (PTSD)",
+    ocd: "Obsessive-Compulsive Disorder (OCD)",
+    bipolar: "Bipolar Disorder",
+    bpd: "Borderline Personality Disorder (BPD)",
+    schizophrenia: "Schizophrenia",
+    eating_disorders:
+      "Eating Disorders (Anorexia, Bulimia, Binge Eating Disorder)",
+    dysthymia: "Dysthymia (Persistent Depressive Disorder)",
+    specific_phobias: "Specific Phobias",
+    agoraphobia: "Agoraphobia",
+    substance_use: "Substance Use Disorder",
+    autism_spectrum: "Autism Spectrum Disorder (ASD)",
+    adjustment_disorder: "Adjustment Disorder",
+    insomnia: "Insomnia Disorder",
+    somatic_symptom: "Somatic Symptom Disorder",
+    histrionic_personality: "Histrionic Personality Disorder",
+    panic_disorder: "Panic Disorder",
+  };
+  return conditionMap[value] || value || "Not set";
+};
+
 export default function DashboardPage() {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
   const { accessToken, role } = useAppSelector((state) => state.auth);
@@ -247,6 +294,11 @@ export default function DashboardPage() {
 
   const { data: analyticsData, error: analyticsError } = useSWR(
     canQuery ? `${baseUrl}/api/v1/analytics/summary` : null,
+    authorizedFetcher
+  );
+
+  const { data: subscriptionData, error: subscriptionError } = useSWR(
+    canQuery ? `${baseUrl}/api/v1/billing/subscription/` : null,
     authorizedFetcher
   );
 
@@ -331,6 +383,10 @@ export default function DashboardPage() {
         zip: existing.zip ?? "",
         fax: existing.fax ?? "",
         business_hours: existing.business_hours ?? "",
+        npi: existing.npi ?? "",
+        visibility_packages: existing.visibility_packages ?? [],
+        mental_health_condition: existing.mental_health_condition ?? "",
+        cta_message: existing.cta_message ?? "",
         public_token: existing.public_token ?? null,
         embeddingUpdatedAt: existing.embedding?.updated_at ?? null,
         dirty: false,
@@ -380,6 +436,10 @@ export default function DashboardPage() {
         zip: formState.zip,
         fax: formState.fax,
         business_hours: formState.business_hours,
+        npi: formState.npi,
+        visibility_packages: formState.visibility_packages,
+        mental_health_condition: formState.mental_health_condition,
+        cta_message: formState.cta_message,
       };
       const url = formState.id
         ? `${baseUrl}/api/v1/data/practices/${formState.id}/`
@@ -444,7 +504,8 @@ export default function DashboardPage() {
         | "practice_type"
         | "patient_types"
         | "ethnicity"
-        | "types_of_therapy",
+        | "types_of_therapy"
+        | "visibility_packages",
       value: string,
       checked: boolean
     ) => {
@@ -515,6 +576,10 @@ export default function DashboardPage() {
         zip: existing.zip ?? "",
         fax: existing.fax ?? "",
         business_hours: existing.business_hours ?? "",
+        npi: existing.npi ?? "",
+        visibility_packages: existing.visibility_packages ?? [],
+        mental_health_condition: existing.mental_health_condition ?? "",
+        cta_message: existing.cta_message ?? "",
         public_token: existing.public_token ?? null,
         embeddingUpdatedAt: existing.embedding?.updated_at ?? null,
         dirty: false,
@@ -571,8 +636,69 @@ export default function DashboardPage() {
     return null;
   };
 
+  // Subscription expiration notice
+  const renderSubscriptionNotice = () => {
+    if (!subscriptionData) return null;
+
+    const subscription = subscriptionData as any;
+    const isExpired = !subscription.subscriptionActive;
+
+    if (!isExpired) return null;
+
+    return (
+      <div className="rounded-[16px] border border-red-200 bg-red-50 px-6 py-4 shadow-lg">
+        <div className="flex items-start gap-3">
+          <svg
+            className="h-6 w-6 text-red-500 mt-0.5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+            />
+          </svg>
+          <div className="flex-1">
+            <h3 className="text-sm font-semibold text-red-800">
+              Subscription Expired
+            </h3>
+            <p className="mt-1 text-sm text-red-700">
+              Your subscription has expired. Your practices will not appear in
+              AI recommendations until you renew your subscription.
+            </p>
+            <div className="mt-3">
+              <Link
+                href="/dashboard/billing"
+                className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors"
+              >
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+                  />
+                </svg>
+                Renew Subscription
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="flex flex-col gap-12">
+      {renderSubscriptionNotice()}
       <header className="rounded-[32px] border border-white/70 bg-white/80 px-8 py-10 shadow-2xl shadow-blue-500/10 backdrop-blur">
         <div className="flex flex-wrap items-center justify-between gap-6">
           <div className="space-y-4">
@@ -1468,6 +1594,166 @@ export default function DashboardPage() {
                   placeholder="e.g., Mon-Fri 9AM-5PM"
                 />
               </label>
+
+              {/* NPI Field */}
+              <label className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">
+                  Please enter the Health Care Professional In Charge National
+                  Provider Identifier (NPI) or Practice National Provider
+                  Identifier (NPI)
+                </span>
+                <input
+                  value={formState.npi}
+                  onChange={(event) => updateField("npi", event.target.value)}
+                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  placeholder="e.g., 1234567890"
+                />
+              </label>
+
+              {/* Visibility Package Field */}
+              <label className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">
+                  Which visibility package would you like to reserve?
+                </span>
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={formState.visibility_packages.includes(
+                        "ai_search_only"
+                      )}
+                      onChange={(event) =>
+                        updateArrayField(
+                          "visibility_packages",
+                          "ai_search_only",
+                          event.target.checked
+                        )
+                      }
+                      className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-slate-700">
+                      AI Search Tool only ($20/month or $220/year per practice)
+                    </span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={formState.visibility_packages.includes(
+                        "cta_spot_1"
+                      )}
+                      onChange={(event) =>
+                        updateArrayField(
+                          "visibility_packages",
+                          "cta_spot_1",
+                          event.target.checked
+                        )
+                      }
+                      className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-slate-700">
+                      Call To Action (CTA) Spot #1 ($28 per month or $308 per
+                      year)
+                    </span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={formState.visibility_packages.includes(
+                        "cta_spot_2"
+                      )}
+                      onChange={(event) =>
+                        updateArrayField(
+                          "visibility_packages",
+                          "cta_spot_2",
+                          event.target.checked
+                        )
+                      }
+                      className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-slate-700">
+                      Call To Action (CTA) Spot #2 ($28 per month or $308 per
+                      year)
+                    </span>
+                  </label>
+                </div>
+              </label>
+
+              {/* Mental Health Condition Field */}
+              <label className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">
+                  If you selected a CTA spot, which mental health condition
+                  would you like to be featured under?
+                </span>
+                <select
+                  value={formState.mental_health_condition}
+                  onChange={(event) =>
+                    updateField("mental_health_condition", event.target.value)
+                  }
+                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                >
+                  <option value="">Select a condition</option>
+                  <option value="depression">
+                    Depression (Major Depressive Disorder)
+                  </option>
+                  <option value="generalized_anxiety">
+                    Generalized Anxiety Disorder (GAD)
+                  </option>
+                  <option value="social_anxiety">
+                    Social Anxiety Disorder
+                  </option>
+                  <option value="ptsd">
+                    Post-Traumatic Stress Disorder (PTSD)
+                  </option>
+                  <option value="ocd">
+                    Obsessive-Compulsive Disorder (OCD)
+                  </option>
+                  <option value="bipolar">Bipolar Disorder</option>
+                  <option value="bpd">
+                    Borderline Personality Disorder (BPD)
+                  </option>
+                  <option value="schizophrenia">Schizophrenia</option>
+                  <option value="eating_disorders">
+                    Eating Disorders (Anorexia, Bulimia, Binge Eating Disorder)
+                  </option>
+                  <option value="dysthymia">
+                    Dysthymia (Persistent Depressive Disorder)
+                  </option>
+                  <option value="specific_phobias">Specific Phobias</option>
+                  <option value="agoraphobia">Agoraphobia</option>
+                  <option value="substance_use">Substance Use Disorder</option>
+                  <option value="autism_spectrum">
+                    Autism Spectrum Disorder (ASD)
+                  </option>
+                  <option value="adjustment_disorder">
+                    Adjustment Disorder
+                  </option>
+                  <option value="insomnia">Insomnia Disorder</option>
+                  <option value="somatic_symptom">
+                    Somatic Symptom Disorder
+                  </option>
+                  <option value="histrionic_personality">
+                    Histrionic Personality Disorder
+                  </option>
+                  <option value="panic_disorder">Panic Disorder</option>
+                </select>
+              </label>
+
+              {/* CTA Message Field */}
+              <label className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">
+                  If you selected a CTA spot, what message would you like to use
+                  as your call to action?
+                </span>
+                <textarea
+                  value={formState.cta_message}
+                  onChange={(event) =>
+                    updateField("cta_message", event.target.value)
+                  }
+                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  placeholder="e.g., Book your consultation today and take the first step towards better mental health."
+                  rows={3}
+                />
+              </label>
             </div>
           </div>
         </section>
@@ -2209,6 +2495,166 @@ export default function DashboardPage() {
                   placeholder="e.g., Mon-Fri 9AM-5PM"
                 />
               </label>
+
+              {/* NPI Field */}
+              <label className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">
+                  Please enter the Health Care Professional In Charge National
+                  Provider Identifier (NPI) or Practice National Provider
+                  Identifier (NPI)
+                </span>
+                <input
+                  value={formState.npi}
+                  onChange={(event) => updateField("npi", event.target.value)}
+                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  placeholder="e.g., 1234567890"
+                />
+              </label>
+
+              {/* Visibility Package Field */}
+              <label className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">
+                  Which visibility package would you like to reserve?
+                </span>
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={formState.visibility_packages.includes(
+                        "ai_search_only"
+                      )}
+                      onChange={(event) =>
+                        updateArrayField(
+                          "visibility_packages",
+                          "ai_search_only",
+                          event.target.checked
+                        )
+                      }
+                      className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-slate-700">
+                      AI Search Tool only ($20/month or $220/year per practice)
+                    </span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={formState.visibility_packages.includes(
+                        "cta_spot_1"
+                      )}
+                      onChange={(event) =>
+                        updateArrayField(
+                          "visibility_packages",
+                          "cta_spot_1",
+                          event.target.checked
+                        )
+                      }
+                      className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-slate-700">
+                      Call To Action (CTA) Spot #1 ($28 per month or $308 per
+                      year)
+                    </span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={formState.visibility_packages.includes(
+                        "cta_spot_2"
+                      )}
+                      onChange={(event) =>
+                        updateArrayField(
+                          "visibility_packages",
+                          "cta_spot_2",
+                          event.target.checked
+                        )
+                      }
+                      className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-slate-700">
+                      Call To Action (CTA) Spot #2 ($28 per month or $308 per
+                      year)
+                    </span>
+                  </label>
+                </div>
+              </label>
+
+              {/* Mental Health Condition Field */}
+              <label className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">
+                  If you selected a CTA spot, which mental health condition
+                  would you like to be featured under?
+                </span>
+                <select
+                  value={formState.mental_health_condition}
+                  onChange={(event) =>
+                    updateField("mental_health_condition", event.target.value)
+                  }
+                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                >
+                  <option value="">Select a condition</option>
+                  <option value="depression">
+                    Depression (Major Depressive Disorder)
+                  </option>
+                  <option value="generalized_anxiety">
+                    Generalized Anxiety Disorder (GAD)
+                  </option>
+                  <option value="social_anxiety">
+                    Social Anxiety Disorder
+                  </option>
+                  <option value="ptsd">
+                    Post-Traumatic Stress Disorder (PTSD)
+                  </option>
+                  <option value="ocd">
+                    Obsessive-Compulsive Disorder (OCD)
+                  </option>
+                  <option value="bipolar">Bipolar Disorder</option>
+                  <option value="bpd">
+                    Borderline Personality Disorder (BPD)
+                  </option>
+                  <option value="schizophrenia">Schizophrenia</option>
+                  <option value="eating_disorders">
+                    Eating Disorders (Anorexia, Bulimia, Binge Eating Disorder)
+                  </option>
+                  <option value="dysthymia">
+                    Dysthymia (Persistent Depressive Disorder)
+                  </option>
+                  <option value="specific_phobias">Specific Phobias</option>
+                  <option value="agoraphobia">Agoraphobia</option>
+                  <option value="substance_use">Substance Use Disorder</option>
+                  <option value="autism_spectrum">
+                    Autism Spectrum Disorder (ASD)
+                  </option>
+                  <option value="adjustment_disorder">
+                    Adjustment Disorder
+                  </option>
+                  <option value="insomnia">Insomnia Disorder</option>
+                  <option value="somatic_symptom">
+                    Somatic Symptom Disorder
+                  </option>
+                  <option value="histrionic_personality">
+                    Histrionic Personality Disorder
+                  </option>
+                  <option value="panic_disorder">Panic Disorder</option>
+                </select>
+              </label>
+
+              {/* CTA Message Field */}
+              <label className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">
+                  If you selected a CTA spot, what message would you like to use
+                  as your call to action?
+                </span>
+                <textarea
+                  value={formState.cta_message}
+                  onChange={(event) =>
+                    updateField("cta_message", event.target.value)
+                  }
+                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  placeholder="e.g., Book your consultation today and take the first step towards better mental health."
+                  rows={3}
+                />
+              </label>
             </div>
 
             <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-100 bg-slate-50/80 px-4 py-4 shadow-inner">
@@ -2508,6 +2954,56 @@ export default function DashboardPage() {
                 </span>
                 <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
                   {formState.business_hours || "Not set"}
+                </div>
+              </div>
+
+              {/* NPI Display */}
+              <div className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">
+                  Health Care Professional In Charge National Provider
+                  Identifier (NPI) or Practice National Provider Identifier
+                  (NPI)
+                </span>
+                <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
+                  {formState.npi || "Not set"}
+                </div>
+              </div>
+
+              {/* Visibility Package Display */}
+              <div className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">
+                  Which visibility package would you like to reserve?
+                </span>
+                <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
+                  {formState.visibility_packages.length > 0
+                    ? formState.visibility_packages
+                        .map((pkg) => getVisibilityPackageDisplay(pkg))
+                        .join(", ")
+                    : "Not set"}
+                </div>
+              </div>
+
+              {/* Mental Health Condition Display */}
+              <div className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">
+                  If you selected a CTA spot, which mental health condition
+                  would you like to be featured under?
+                </span>
+                <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
+                  {getMentalHealthConditionDisplay(
+                    formState.mental_health_condition
+                  )}
+                </div>
+              </div>
+
+              {/* CTA Message Display */}
+              <div className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">
+                  If you selected a CTA spot, what message would you like to use
+                  as your call to action?
+                </span>
+                <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
+                  {formState.cta_message || "Not set"}
                 </div>
               </div>
             </div>
