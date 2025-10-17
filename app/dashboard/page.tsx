@@ -2214,14 +2214,14 @@ export default function DashboardPage() {
             <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-100 bg-slate-50/80 px-4 py-4 shadow-inner">
               <div>
                 <p className="text-sm font-medium text-slate-700">
-                  Embedding status
+                  AI submission status
                 </p>
                 <p className="text-xs text-slate-500">
                   {formState.embeddingUpdatedAt
-                    ? `Last regenerated ${new Date(
+                    ? `Last submitted to AI ${new Date(
                         formState.embeddingUpdatedAt
                       ).toLocaleString()}`
-                    : "Regenerate to capture your latest updates."}
+                    : "Submit to AI to capture your latest updates."}
                 </p>
               </div>
               <button
@@ -2230,7 +2230,7 @@ export default function DashboardPage() {
                 disabled={!formState.id}
                 className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition hover:shadow-slate-900/40 disabled:cursor-not-allowed disabled:bg-slate-300"
               >
-                Regenerate embedding
+                Resubmit to AI
               </button>
             </div>
           </div>
