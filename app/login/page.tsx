@@ -76,16 +76,14 @@ export default function LoginPage() {
                 Welcome back.
               </h1>
               <p className="max-w-md text-base text-slate-600">
-                Pick up where you left off: update your practice profile,
-                refresh embeddings, and review analytics without missing a beat.
+                Pick up right where you left off —update your practice details, adjust your subscription, or review your analytics. 
               </p>
               <div className="rounded-[28px] border border-white/70 bg-white/70 p-6 shadow-xl backdrop-blur">
                 <p className="text-sm font-semibold text-slate-700">
-                  Need to invite teammates?
+                  Important notification:
                 </p>
                 <p className="mt-2 text-sm text-slate-500">
-                  Account owners can contact support to add additional practices
-                  and workspace members.
+                  Our free trial is active through December 31, 2025. After that, you'll receive an additional 14-day grace period before billing begins.
                 </p>
               </div>
             </div>
@@ -96,7 +94,7 @@ export default function LoginPage() {
                   Sign in to your dashboard
                 </h2>
                 <p className="text-sm text-slate-500">
-                  Use the email and password associated with your Supabase
+                  Use the email and password associated with your account.
                   account.
                 </p>
               </div>
