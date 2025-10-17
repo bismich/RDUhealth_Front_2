@@ -20,7 +20,7 @@ type Practice = {
   primary_location: string;
   other_location: string;
   offer_medication_management: boolean | null;
-  types_of_therapy: string;
+  types_of_therapy: string[];
   services: string;
   practice_details: string;
   patient_types: string[];
@@ -60,7 +60,7 @@ type PracticeFormState = {
   primary_location: string;
   other_location: string;
   offer_medication_management: boolean | null;
-  types_of_therapy: string;
+  types_of_therapy: string[];
   services: string;
   practice_details: string;
   patient_types: string[];
@@ -129,7 +129,7 @@ const initialFormState = (): PracticeFormState => ({
   primary_location: "",
   other_location: "",
   offer_medication_management: null,
-  types_of_therapy: "",
+  types_of_therapy: [],
   services: "",
   practice_details: "",
   patient_types: [],
@@ -169,6 +169,48 @@ const parseArrayField = (value: string | string[]): string[] => {
 
 const formatArrayField = (value: string[]): string => {
   return value.join(", ");
+};
+
+// Helper functions for select field display values
+const getPrimaryLocationDisplay = (value: string): string => {
+  const locationMap: Record<string, string> = {
+    chapel_hill: "Chapel Hill",
+    durham: "Durham",
+    raleigh: "Raleigh",
+    cary: "Cary",
+    morrisville: "Morrisville",
+    fayetteville: "Fayetteville",
+    apex: "Apex",
+  };
+  return locationMap[value] || value || "Not set";
+};
+
+const getGenderIdentityDisplay = (value: string): string => {
+  const genderMap: Record<string, string> = {
+    male_only: "Male only",
+    female_only: "Female only",
+    both: "Both Male and Female",
+    non_binary: "Non Binary",
+  };
+  return genderMap[value] || value || "Not set";
+};
+
+const getSeePatientTypeDisplay = (value: string): string => {
+  const patientTypeMap: Record<string, string> = {
+    in_person_only: "In-Person Only",
+    virtual_only: "Virtual Only",
+    in_person_virtual: "In-Person and Virtual",
+  };
+  return patientTypeMap[value] || value || "Not set";
+};
+
+const getWillingToTravelDisplay = (value: string): string => {
+  const travelMap: Record<string, string> = {
+    yes: "Yes",
+    no: "No",
+    depends: "Yes - Depends on the situation",
+  };
+  return travelMap[value] || value || "Not set";
 };
 
 export default function DashboardPage() {
@@ -269,7 +311,7 @@ export default function DashboardPage() {
         primary_location: existing.primary_location ?? "",
         other_location: existing.other_location ?? "",
         offer_medication_management: existing.offer_medication_management,
-        types_of_therapy: existing.types_of_therapy ?? "",
+        types_of_therapy: parseArrayField(existing.types_of_therapy ?? ""),
         services: existing.services ?? "",
         practice_details: existing.practice_details ?? "",
         patient_types: parseArrayField(existing.patient_types ?? ""),
@@ -318,7 +360,7 @@ export default function DashboardPage() {
         primary_location: formState.primary_location,
         other_location: formState.other_location,
         offer_medication_management: formState.offer_medication_management,
-        types_of_therapy: formState.types_of_therapy,
+        types_of_therapy: formatArrayField(formState.types_of_therapy),
         services: formState.services,
         practice_details: formState.practice_details,
         patient_types: formatArrayField(formState.patient_types),
@@ -398,7 +440,11 @@ export default function DashboardPage() {
 
   const updateArrayField = useCallback(
     (
-      field: "practice_type" | "patient_types" | "ethnicity",
+      field:
+        | "practice_type"
+        | "patient_types"
+        | "ethnicity"
+        | "types_of_therapy",
       value: string,
       checked: boolean
     ) => {
@@ -449,7 +495,7 @@ export default function DashboardPage() {
         primary_location: existing.primary_location ?? "",
         other_location: existing.other_location ?? "",
         offer_medication_management: existing.offer_medication_management,
-        types_of_therapy: existing.types_of_therapy ?? "",
+        types_of_therapy: parseArrayField(existing.types_of_therapy ?? ""),
         services: existing.services ?? "",
         practice_details: existing.practice_details ?? "",
         patient_types: parseArrayField(existing.patient_types ?? ""),
@@ -845,6 +891,17 @@ export default function DashboardPage() {
               </label>
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
+                  Fax Number
+                </span>
+                <input
+                  value={formState.fax}
+                  onChange={(event) => updateField("fax", event.target.value)}
+                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  placeholder="Fax Number"
+                />
+              </label>
+              <label className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">
                   Please list the full names, credentials, and National Provider
                   Identifier (NPI) numbers of your clinical staff (we recommend
                   only listing providers who are taking new patients) *
@@ -1007,6 +1064,32 @@ export default function DashboardPage() {
                     />
                     <span className="text-sm text-slate-700">Morrisville</span>
                   </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="primary_location"
+                      value="fayetteville"
+                      checked={formState.primary_location === "fayetteville"}
+                      onChange={(event) =>
+                        updateField("primary_location", event.target.value)
+                      }
+                      className="text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-slate-700">Fayetteville</span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="primary_location"
+                      value="apex"
+                      checked={formState.primary_location === "apex"}
+                      onChange={(event) =>
+                        updateField("primary_location", event.target.value)
+                      }
+                      className="text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-slate-700">Apex</span>
+                  </label>
                 </div>
               </label>
               <label className="flex flex-col gap-2">
@@ -1054,14 +1137,78 @@ export default function DashboardPage() {
                   For therapists: Please indicate the types of therapy you
                   provide (select all that apply).
                 </span>
-                <input
-                  value={formState.types_of_therapy}
-                  onChange={(event) =>
-                    updateField("types_of_therapy", event.target.value)
-                  }
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="CBT, DBT, EMDR, etc. (comma separated)"
-                />
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={formState.types_of_therapy.includes(
+                        "Psychiatry Only"
+                      )}
+                      onChange={(event) =>
+                        updateArrayField(
+                          "types_of_therapy",
+                          "Psychiatry Only",
+                          event.target.checked
+                        )
+                      }
+                      className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-slate-700">
+                      Psychiatry Only
+                    </span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={formState.types_of_therapy.includes(
+                        "Therapy Only"
+                      )}
+                      onChange={(event) =>
+                        updateArrayField(
+                          "types_of_therapy",
+                          "Therapy Only",
+                          event.target.checked
+                        )
+                      }
+                      className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-slate-700">Therapy Only</span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={formState.types_of_therapy.includes(
+                        "Psychiatry + Therapy"
+                      )}
+                      onChange={(event) =>
+                        updateArrayField(
+                          "types_of_therapy",
+                          "Psychiatry + Therapy",
+                          event.target.checked
+                        )
+                      }
+                      className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-slate-700">
+                      Psychiatry + Therapy
+                    </span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={formState.types_of_therapy.includes("Other")}
+                      onChange={(event) =>
+                        updateArrayField(
+                          "types_of_therapy",
+                          "Other",
+                          event.target.checked
+                        )
+                      }
+                      className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-slate-700">Other</span>
+                  </label>
+                </div>
               </label>
               <label className="col-span-1 md:col-span-2 flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
@@ -1203,17 +1350,17 @@ export default function DashboardPage() {
                   placeholder="List accepted insurance plans"
                 />
               </label>
-              <label className="flex flex-col gap-2">
+              <label className="col-span-1 md:col-span-2 flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   List your self-pay rates for services (without insurance).
                 </span>
-                <input
+                <textarea
                   value={formState.self_pay_rate_of_services}
                   onChange={(event) =>
                     updateField("self_pay_rate_of_services", event.target.value)
                   }
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="e.g., $150/hour"
+                  className="min-h-[80px] rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  placeholder="e.g., $150/hour for individual therapy, $200/hour for couples counseling"
                 />
               </label>
               <label className="flex flex-col gap-2">
@@ -1306,48 +1453,6 @@ export default function DashboardPage() {
                   }
                   className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
                   placeholder="e.g., 2-3 weeks"
-                />
-              </label>
-              <label className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">City</span>
-                <input
-                  value={formState.city}
-                  onChange={(event) => updateField("city", event.target.value)}
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="City"
-                />
-              </label>
-              <label className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">
-                  State
-                </span>
-                <input
-                  value={formState.state}
-                  onChange={(event) => updateField("state", event.target.value)}
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="State"
-                />
-              </label>
-              <label className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">
-                  ZIP Code
-                </span>
-                <input
-                  value={formState.zip}
-                  onChange={(event) => updateField("zip", event.target.value)}
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="ZIP Code"
-                />
-              </label>
-              <label className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">
-                  Fax Number
-                </span>
-                <input
-                  value={formState.fax}
-                  onChange={(event) => updateField("fax", event.target.value)}
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="Fax Number number"
                 />
               </label>
               <label className="flex flex-col gap-2">
@@ -1527,6 +1632,17 @@ export default function DashboardPage() {
               </label>
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
+                  Fax Number
+                </span>
+                <input
+                  value={formState.fax}
+                  onChange={(event) => updateField("fax", event.target.value)}
+                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  placeholder="Fax Number"
+                />
+              </label>
+              <label className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">
                   Please list the full names, credentials, and National Provider
                   Identifier (NPI) numbers of your clinical staff (we recommend
                   only listing providers who are taking new patients) *
@@ -1689,6 +1805,32 @@ export default function DashboardPage() {
                     />
                     <span className="text-sm text-slate-700">Morrisville</span>
                   </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="primary_location"
+                      value="fayetteville"
+                      checked={formState.primary_location === "fayetteville"}
+                      onChange={(event) =>
+                        updateField("primary_location", event.target.value)
+                      }
+                      className="text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-slate-700">Fayetteville</span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="primary_location"
+                      value="apex"
+                      checked={formState.primary_location === "apex"}
+                      onChange={(event) =>
+                        updateField("primary_location", event.target.value)
+                      }
+                      className="text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-slate-700">Apex</span>
+                  </label>
                 </div>
               </label>
               <label className="flex flex-col gap-2">
@@ -1736,14 +1878,78 @@ export default function DashboardPage() {
                   For therapists: Please indicate the types of therapy you
                   provide (select all that apply).
                 </span>
-                <input
-                  value={formState.types_of_therapy}
-                  onChange={(event) =>
-                    updateField("types_of_therapy", event.target.value)
-                  }
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="CBT, DBT, EMDR, etc. (comma separated)"
-                />
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={formState.types_of_therapy.includes(
+                        "Psychiatry Only"
+                      )}
+                      onChange={(event) =>
+                        updateArrayField(
+                          "types_of_therapy",
+                          "Psychiatry Only",
+                          event.target.checked
+                        )
+                      }
+                      className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-slate-700">
+                      Psychiatry Only
+                    </span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={formState.types_of_therapy.includes(
+                        "Therapy Only"
+                      )}
+                      onChange={(event) =>
+                        updateArrayField(
+                          "types_of_therapy",
+                          "Therapy Only",
+                          event.target.checked
+                        )
+                      }
+                      className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-slate-700">Therapy Only</span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={formState.types_of_therapy.includes(
+                        "Psychiatry + Therapy"
+                      )}
+                      onChange={(event) =>
+                        updateArrayField(
+                          "types_of_therapy",
+                          "Psychiatry + Therapy",
+                          event.target.checked
+                        )
+                      }
+                      className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-slate-700">
+                      Psychiatry + Therapy
+                    </span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={formState.types_of_therapy.includes("Other")}
+                      onChange={(event) =>
+                        updateArrayField(
+                          "types_of_therapy",
+                          "Other",
+                          event.target.checked
+                        )
+                      }
+                      className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-slate-700">Other</span>
+                  </label>
+                </div>
               </label>
               <label className="col-span-1 md:col-span-2 flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
@@ -1885,17 +2091,17 @@ export default function DashboardPage() {
                   placeholder="List accepted insurance plans"
                 />
               </label>
-              <label className="flex flex-col gap-2">
+              <label className="col-span-1 md:col-span-2 flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   List your self-pay rates for services (without insurance).
                 </span>
-                <input
+                <textarea
                   value={formState.self_pay_rate_of_services}
                   onChange={(event) =>
                     updateField("self_pay_rate_of_services", event.target.value)
                   }
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="e.g., $150/hour"
+                  className="min-h-[80px] rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  placeholder="e.g., $150/hour for individual therapy, $200/hour for couples counseling"
                 />
               </label>
               <label className="flex flex-col gap-2">
@@ -1988,48 +2194,6 @@ export default function DashboardPage() {
                   }
                   className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
                   placeholder="e.g., 2-3 weeks"
-                />
-              </label>
-              <label className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">City</span>
-                <input
-                  value={formState.city}
-                  onChange={(event) => updateField("city", event.target.value)}
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="City"
-                />
-              </label>
-              <label className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">
-                  State
-                </span>
-                <input
-                  value={formState.state}
-                  onChange={(event) => updateField("state", event.target.value)}
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="State"
-                />
-              </label>
-              <label className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">
-                  ZIP Code
-                </span>
-                <input
-                  value={formState.zip}
-                  onChange={(event) => updateField("zip", event.target.value)}
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="ZIP Code"
-                />
-              </label>
-              <label className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">
-                  Fax Number
-                </span>
-                <input
-                  value={formState.fax}
-                  onChange={(event) => updateField("fax", event.target.value)}
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="Fax Number number"
                 />
               </label>
               <label className="flex flex-col gap-2">
@@ -2167,6 +2331,14 @@ export default function DashboardPage() {
               </div>
               <div className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
+                  Fax Number
+                </span>
+                <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
+                  {formState.fax || "Not set"}
+                </div>
+              </div>
+              <div className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">
                   Credentials and NPI
                 </span>
                 <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
@@ -2186,7 +2358,7 @@ export default function DashboardPage() {
                   Primary Location
                 </span>
                 <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
-                  {formState.primary_location || "Not set"}
+                  {getPrimaryLocationDisplay(formState.primary_location)}
                 </div>
               </div>
               <div className="flex flex-col gap-2">
@@ -2215,7 +2387,7 @@ export default function DashboardPage() {
                   provide (select all that apply).
                 </span>
                 <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
-                  {formState.types_of_therapy || "Not set"}
+                  {formatArrayField(formState.types_of_therapy) || "Not set"}
                 </div>
               </div>
               <div className="col-span-1 md:col-span-2 flex flex-col gap-2">
@@ -2258,7 +2430,7 @@ export default function DashboardPage() {
                   you or your clinical staff (select all that apply).
                 </span>
                 <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
-                  {formState.gender_identity || "Not set"}
+                  {getGenderIdentityDisplay(formState.gender_identity)}
                 </div>
               </div>
               <div className="flex flex-col gap-2">
@@ -2277,11 +2449,11 @@ export default function DashboardPage() {
                   {formState.accepted_insurance_plans || "Not set"}
                 </div>
               </div>
-              <div className="flex flex-col gap-2">
+              <div className="col-span-1 md:col-span-2 flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   List your self-pay rates for services (without insurance).
                 </span>
-                <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
+                <div className="min-h-[80px] rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
                   {formState.self_pay_rate_of_services || "Not set"}
                 </div>
               </div>
@@ -2309,7 +2481,7 @@ export default function DashboardPage() {
                   both? (Please notify us if this changes.) *
                 </span>
                 <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
-                  {formState.see_patient_type || "Not set"}
+                  {getSeePatientTypeDisplay(formState.see_patient_type)}
                 </div>
               </div>
               <div className="flex flex-col gap-2">
@@ -2318,7 +2490,7 @@ export default function DashboardPage() {
                   commute? *
                 </span>
                 <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
-                  {formState.willing_to_travel || "Not set"}
+                  {getWillingToTravelDisplay(formState.willing_to_travel)}
                 </div>
               </div>
               <div className="flex flex-col gap-2">
@@ -2328,36 +2500,6 @@ export default function DashboardPage() {
                 </span>
                 <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
                   {formState.wait_time || "Not set"}
-                </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">City</span>
-                <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
-                  {formState.city || "Not set"}
-                </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">
-                  State
-                </span>
-                <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
-                  {formState.state || "Not set"}
-                </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">
-                  ZIP Code
-                </span>
-                <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
-                  {formState.zip || "Not set"}
-                </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">
-                  Fax Number
-                </span>
-                <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
-                  {formState.fax || "Not set"}
                 </div>
               </div>
               <div className="flex flex-col gap-2">
