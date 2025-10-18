@@ -921,14 +921,14 @@ export default function DashboardPage() {
                   value={formState.name}
                   onChange={(event) => updateField("name", event.target.value)}
                   className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="e.g., Raleigh Therapy Group"
+                  placeholder="e.g., Raleigh Therapy Group,PLLC or Jane Smith,LCSW "
                   required
                 />
               </label>
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   Website (It is ok to add a direct link to appointment
-                  scheduling - recommended for medium to large practices) *
+                  scheduling - recommended for medium or large practices) *
                 </span>
                 <input
                   value={formState.website}
@@ -1648,7 +1648,9 @@ export default function DashboardPage() {
                       className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
                     <span className="text-sm text-slate-700">
-                      Call To Action (CTA) Spot #1 ($28/month) - Optional if you want extra visibility on rdumentalhealth.com
+                      $28/month per spot (optional)
+                      Gain extra visibility on rdumentalhealth.com by featuring your practice in high-traffic areas.
+
                     </span>
                   </label>
                   <label className="flex items-center gap-2">
@@ -2549,8 +2551,7 @@ export default function DashboardPage() {
                       className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
                     <span className="text-sm text-slate-700">
-                      Call To Action (CTA) Spot #1 ($28 per month or $308 per
-                      year)
+                      Call To Action (CTA) Spot ($28 per month)
                     </span>
                   </label>
                   <label className="flex items-center gap-2">
@@ -2969,7 +2970,7 @@ export default function DashboardPage() {
               {/* Visibility Package Display */}
               <div className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  Which visibility package would you like to reserve?
+                  Which monthly package would you like to subscribe for?
                 </span>
                 <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
                   {formState.visibility_packages.length > 0
