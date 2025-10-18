@@ -199,10 +199,10 @@ const getPrimaryLocationDisplay = (value: string): string => {
 
 const getGenderIdentityDisplay = (value: string): string => {
   const genderMap: Record<string, string> = {
-    male_only: "Male only",
-    female_only: "Female only",
-    both: "Both Male and Female",
-    non_binary: "Non Binary",
+    male_only: "Male staff only",
+    female_only: "Female staff only",
+    both: "Both Male and Female staff",
+    non_binary: "Non Binary staff",
   };
   return genderMap[value] || value || "Not set";
 };
@@ -227,9 +227,9 @@ const getWillingToTravelDisplay = (value: string): string => {
 
 const getVisibilityPackageDisplay = (value: string): string => {
   const packageMap: Record<string, string> = {
-    ai_search_only: "AI Search Tool only ($20/month or $220/year per practice)",
-    cta_spot_1: "Call To Action (CTA) Spot #1 ($28 per month or $308 per year)",
-    cta_spot_2: "Call To Action (CTA) Spot #2 ($28 per month or $308 per year)",
+    ai_search_only: "AI Search Tool only ($25/month)",
+    cta_spot_1: "Call To Action (CTA) Spot #1 ($28/month)",
+    cta_spot_2: "Call To Action (CTA) Spot #2 ($28/month)",
   };
   return packageMap[value] || value || "Not set";
 };
@@ -244,8 +244,7 @@ const getMentalHealthConditionDisplay = (value: string): string => {
     bipolar: "Bipolar Disorder",
     bpd: "Borderline Personality Disorder (BPD)",
     schizophrenia: "Schizophrenia",
-    eating_disorders:
-      "Eating Disorders (Anorexia, Bulimia, Binge Eating Disorder)",
+    eating_disorders:"Eating Disorders (Anorexia, Bulimia, Binge Eating Disorder)",
     dysthymia: "Dysthymia (Persistent Depressive Disorder)",
     specific_phobias: "Specific Phobias",
     agoraphobia: "Agoraphobia",
@@ -711,8 +710,7 @@ export default function DashboardPage() {
                 Practice dashboard
               </h1>
               <p className="max-w-2xl text-sm text-slate-600">
-                Curate your presence, refresh embeddings, and see how clients
-                engage with your knowledge base in real time.
+                Update your practice details - change your subscription - review analytics.
               </p>
             </div>
           </div>
@@ -882,10 +880,10 @@ export default function DashboardPage() {
             <div className="flex flex-wrap items-start justify-between gap-4 md:flex-row flex-col">
               <div className="space-y-1">
                 <h2 className="text-2xl font-semibold text-slate-900">
-                  Create a practice
+                  Add your practice to our AI powered referral tool.
                 </h2>
                 <p className="text-sm text-slate-500">
-                  Add your first practice to power AI-assisted search.
+                  Enter your practice details accurately to ensure the best possible matches and visibility.
                 </p>
               </div>
               <div className="flex items-center gap-3">
@@ -929,8 +927,8 @@ export default function DashboardPage() {
               </label>
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  Website (it is ok to add direct link to appointment
-                  scheduling) *
+                  Website (It is ok to add a direct link to appointment
+                  scheduling - recommended for medium to large practices) *
                 </span>
                 <input
                   value={formState.website}
@@ -951,7 +949,7 @@ export default function DashboardPage() {
                     updateField("description", event.target.value)
                   }
                   className="min-h-[140px] rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="Summarize your services and approach"
+                  placeholder="Summarize your services and approach - Be sure to highlight what sets you apart from others to ensure the best possible matches and maximum visibility."
                 />
               </label>
               <label className="flex flex-col gap-2">
@@ -964,7 +962,7 @@ export default function DashboardPage() {
                     updateField("specialty", event.target.value)
                   }
                   className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="e.g., Anxiety, Couples Counseling"
+                  placeholder="e.g., Addictions, medication evaluation,Testing and Evaluation..."
                 />
               </label>
               <label className="flex flex-col gap-2">
@@ -1028,9 +1026,8 @@ export default function DashboardPage() {
               </label>
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  Please list the full names, credentials, and National Provider
-                  Identifier (NPI) numbers of your clinical staff (we recommend
-                  only listing providers who are taking new patients) *
+                  Please enter the health care professional in charge National Provider Identifier (NPI)
+                  or the practice National Provider Identifier (NPI)*
                 </span>
                 <p className="text-xs text-orange-600">
                   The NPI number will not be displayed—this is for standard
@@ -1042,7 +1039,7 @@ export default function DashboardPage() {
                     updateField("credentials_and_npi", event.target.value)
                   }
                   className="min-h-[80px] rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="Dr. John Smith, MD, NPI: 1234567890&#10;Jane Doe, LCSW, NPI: 0987654321"
+                  placeholder="Dr. John Smith,Psychiatrist, MD, PhD NPI: 1234567890&#10; Raleigh Therapy group NPI: 1987654321"
                 />
               </label>
               <label className="flex flex-col gap-2">
@@ -1054,19 +1051,19 @@ export default function DashboardPage() {
                     <input
                       type="checkbox"
                       checked={formState.practice_type.includes(
-                        "psychiatry_only"
+                        "psychiatry"
                       )}
                       onChange={(event) =>
                         updateArrayField(
                           "practice_type",
-                          "psychiatry_only",
+                          "psychiatry",
                           event.target.checked
                         )
                       }
                       className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
                     <span className="text-sm text-slate-700">
-                      Psychiatry Only
+                      Psychiatry
                     </span>
                   </label>
                   <label className="flex items-center gap-2">
@@ -1076,19 +1073,19 @@ export default function DashboardPage() {
                       onChange={(event) =>
                         updateArrayField(
                           "practice_type",
-                          "therapy_only",
+                          "therapy",
                           event.target.checked
                         )
                       }
                       className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
-                    <span className="text-sm text-slate-700">Therapy Only</span>
+                    <span className="text-sm text-slate-700">Therapy</span>
                   </label>
                   <label className="flex items-center gap-2">
                     <input
                       type="checkbox"
                       checked={formState.practice_type.includes(
-                        "psychiatry_therapy"
+                        "Therapy"
                       )}
                       onChange={(event) =>
                         updateArrayField(
@@ -1100,7 +1097,7 @@ export default function DashboardPage() {
                       className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
                     <span className="text-sm text-slate-700">
-                      Psychiatry + Therapy
+                      Mental Health Counseling
                     </span>
                   </label>
                   <label className="flex items-center gap-2">
@@ -1486,13 +1483,12 @@ export default function DashboardPage() {
                     updateField("self_pay_rate_of_services", event.target.value)
                   }
                   className="min-h-[80px] rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="e.g., $150/hour for individual therapy, $200/hour for couples counseling"
+                  placeholder="e.g., Pyschiatric Evaluation: $350, $200/hour for couples counseling..."
                 />
               </label>
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  Are you currently accepting new patients? (Please notify us of
-                  any changes.) *
+                  Are you currently accepting new patients? (We recommend pausing your subscription when no longer accepting new patients) *
                 </span>
                 <select
                   value={formState.is_accepting_new_patients.toString()}
@@ -1510,8 +1506,7 @@ export default function DashboardPage() {
               </label>
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  Is your facility ADA accessible? (Kindly notify us of any
-                  updates.) *
+                  Is your facility ADA accessible? (If this changes, please update your answer.)*
                 </span>
                 <select
                   value={formState.is_ada_accessible.toString()}
@@ -1530,7 +1525,8 @@ export default function DashboardPage() {
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   How do you currently see patients? In person, virtual, or
-                  both? (Please notify us if this changes.) *
+                  both?
+                  (If this changes, please update your answer.) *
                 </span>
                 <select
                   value={formState.see_patient_type}
@@ -1550,7 +1546,8 @@ export default function DashboardPage() {
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   Are you willing to travel to patients who are unable to
-                  commute? *
+                  commute? 
+                  (If this changes, please update your answer.) *
                 </span>
                 <select
                   value={formState.willing_to_travel}
@@ -1569,8 +1566,8 @@ export default function DashboardPage() {
               </label>
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  How long is your current wait time for new patients? (Let us
-                  know if this changes.) *
+                  How long is your current wait time for new patients? 
+                  (If this changes, please update your answer.) *
                 </span>
                 <input
                   value={formState.wait_time}
@@ -1632,7 +1629,7 @@ export default function DashboardPage() {
                       className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
                     <span className="text-sm text-slate-700">
-                      AI Search Tool only ($20/month or $220/year per practice)
+                      AI Search Tool only ($25/month) - Required to use this app
                     </span>
                   </label>
                   <label className="flex items-center gap-2">
@@ -1651,8 +1648,7 @@ export default function DashboardPage() {
                       className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
                     <span className="text-sm text-slate-700">
-                      Call To Action (CTA) Spot #1 ($28 per month or $308 per
-                      year)
+                      Call To Action (CTA) Spot #1 ($28/month) - Optional if you want extra visibility on rdumentalhealth.com
                     </span>
                   </label>
                   <label className="flex items-center gap-2">
@@ -1671,7 +1667,7 @@ export default function DashboardPage() {
                       className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
                     <span className="text-sm text-slate-700">
-                      Call To Action (CTA) Spot #2 ($28 per month or $308 per
+                      Call To Action (CTA) Spot #2 ($28/month) - Optional if you want extra visibility on rdumentalhealth.com
                       year)
                     </span>
                   </label>
@@ -1683,6 +1679,7 @@ export default function DashboardPage() {
                 <span className="text-sm font-medium text-slate-700">
                   If you selected a CTA spot, which mental health condition
                   would you like to be featured under?
+                  Just a heads-up: purchased slots vanish from the list below. With only a few,  available, it’s first come, first served.
                 </span>
                 <select
                   value={formState.mental_health_condition}
@@ -1750,7 +1747,7 @@ export default function DashboardPage() {
                     updateField("cta_message", event.target.value)
                   }
                   className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="e.g., Book your consultation today and take the first step towards better mental health."
+                  placeholder="e.g., Take the first step towards better mental health today."
                   rows={3}
                 />
               </label>
