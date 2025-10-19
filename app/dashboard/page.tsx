@@ -821,13 +821,11 @@ export default function DashboardPage() {
 
           <div className="rounded-[28px] border border-white/70 bg-white/90 p-8 shadow-xl shadow-blue-500/10 backdrop-blur">
             <h2 className="text-2xl font-semibold text-slate-900">
-              Global Discovery Chat
+              Peer-to-Peer Referral Network
             </h2>
             <div className="mt-4 space-y-3 text-sm text-slate-600">
               <p>
-                The global chat searches across all practices using AI-powered
-                embeddings. Keep your practice profile current so it surfaces
-                for the right questions.
+                Share your referral link with patients, family, friends, colleagues—and especially on social media. The more providers who share the tool, the greater the visibility for everyone on the platform.
               </p>
               <div className="flex items-center gap-2 md:flex-row flex-col">
                 <code className="flex-1 truncate rounded-2xl border border-slate-200 bg-slate-900/90 px-4 py-3 font-mono text-xs text-slate-100 shadow-inner">
@@ -866,8 +864,7 @@ export default function DashboardPage() {
                 </button>
               </div>
               <p className="text-xs text-slate-500">
-                Tip: add detailed services, specialties, and locations above to
-                improve your ranking in the global results.
+                Tip: Combined with our other marketing efforts, this remains our most effective strategy for filling caseloads quickly and collaboratively.
               </p>
             </div>
           </div>
