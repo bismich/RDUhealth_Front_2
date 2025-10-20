@@ -788,7 +788,7 @@ export default function DashboardPage() {
                   Engagement overview
                 </h2>
                 <p className="text-sm text-slate-500">
-                  Understand what resonates with prospective clients.
+                  Your immediate visibility & lead generation
                 </p>
               </div>
               {analyticsData && (
@@ -1243,7 +1243,7 @@ export default function DashboardPage() {
               </label>
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  If your location isn't listed above, or if you have multiple
+                  If your location isn't listed, or if you have multiple
                   locations, please enter them below
                 </span>
                 <input
@@ -1629,7 +1629,7 @@ export default function DashboardPage() {
               {/* Visibility Package Field */}
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  Which visibility package would you like to reserve?
+                  Choose the subscription package that suits you best
                 </span>
                 <div className="space-y-2">
                   <label className="flex items-center gap-2">
@@ -1648,7 +1648,7 @@ export default function DashboardPage() {
                       className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
                     <span className="text-sm text-slate-700">
-                      AI Search Tool only ($20/month) - Required to use this app
+                      AI Search Tool only ($25/month) - Required to use this app
                     </span>
                   </label>
                   <label className="flex items-center gap-2">
@@ -1667,7 +1667,7 @@ export default function DashboardPage() {
                       className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
                     <span className="text-sm text-slate-700">
-                      $28/month per spot (optional) Gain extra visibility on
+                      Add Call To Action for $28/month per each spot (optional) Gain extra visibility on
                       rdumentalhealth.com by featuring your practice in
                       high-traffic areas.
                     </span>
@@ -2585,10 +2585,12 @@ export default function DashboardPage() {
                       className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
                     <span className="text-sm text-slate-700">
-                      $28/month per spot (optional) Gain extra visibility on
-                      rdumentalhealth.com by featuring your practice in
-                      high-traffic areas.
+                      $28/month per spot (optional) 
                     </span>
+                    <p className="text-xs text-orange-600">
+                      Gain extra visibility on
+                      rdumentalhealth.com by featuring your practice in
+                      high-traffic areas.</p>
                   </label>
                   {/* <label className="flex items-center gap-2">
                     <input
