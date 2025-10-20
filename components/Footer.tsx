@@ -22,9 +22,6 @@ export function Footer() {
           <Link href="/terms" className="transition hover:text-blue-600">
             Terms
           </Link>
-          <Link href="/privacy" className="transition hover:text-blue-600">
-            Privacy
-          </Link>
           <Link href="/login" className="transition hover:text-blue-600">
             Log in
           </Link>

@@ -943,27 +943,28 @@ export default function DashboardPage() {
               </label>
               <label className="col-span-1 md:col-span-2 flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  Description
+                  Description ({formState.description.length}/850)
                 </span>
                 <textarea
                   value={formState.description}
                   onChange={(event) =>
                     updateField("description", event.target.value)
                   }
+                  maxLength={850}
                   className="min-h-[140px] rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
                   placeholder="Summarize your services and approach"
                 />
               </label>
-              <label className="flex flex-col gap-2">
+              <label className="col-span-1 md:col-span-2 flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   Specialty
                 </span>
-                <input
+                <textarea
                   value={formState.specialty}
                   onChange={(event) =>
                     updateField("specialty", event.target.value)
                   }
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="min-h-[80px] rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
                   placeholder="e.g., Anxiety, Couples Counseling"
                 />
               </label>
@@ -1844,27 +1845,28 @@ export default function DashboardPage() {
               </label>
               <label className="col-span-1 md:col-span-2 flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  Description
+                  Description ({formState.description.length}/850)
                 </span>
                 <textarea
                   value={formState.description}
                   onChange={(event) =>
                     updateField("description", event.target.value)
                   }
+                  maxLength={850}
                   className="min-h-[140px] rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
                   placeholder="Summarize your services and approach"
                 />
               </label>
-              <label className="flex flex-col gap-2">
+              <label className="col-span-1 md:col-span-2 flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   Specialty
                 </span>
-                <input
+                <textarea
                   value={formState.specialty}
                   onChange={(event) =>
                     updateField("specialty", event.target.value)
                   }
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="min-h-[80px] rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
                   placeholder="e.g., Anxiety, Couples Counseling"
                 />
               </label>
@@ -2743,11 +2745,11 @@ export default function DashboardPage() {
                   {formState.description || "Not set"}
                 </div>
               </div>
-              <div className="flex flex-col gap-2">
+              <div className="col-span-1 md:col-span-2 flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   Specialty
                 </span>
-                <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
+                <div className="min-h-[80px] rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
                   {formState.specialty || "Not set"}
                 </div>
               </div>
