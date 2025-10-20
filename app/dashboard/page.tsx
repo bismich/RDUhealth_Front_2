@@ -191,7 +191,6 @@ const getPrimaryLocationDisplay = (value: string): string => {
     raleigh: "Raleigh",
     cary: "Cary",
     morrisville: "Morrisville",
-    fayetteville: "Fayetteville",
     apex: "Apex",
   };
   return locationMap[value] || value || "Not set";
@@ -946,27 +945,28 @@ export default function DashboardPage() {
               </label>
               <label className="col-span-1 md:col-span-2 flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  Description
+                  Description ({formState.description.length}/850)
                 </span>
                 <textarea
                   value={formState.description}
                   onChange={(event) =>
                     updateField("description", event.target.value)
                   }
+                  maxLength={850}
                   className="min-h-[140px] rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
                   placeholder="Summarize your services and approach - Be sure to highlight what sets you apart from others to ensure the best possible matches and maximum visibility."
                 />
               </label>
-              <label className="flex flex-col gap-2">
+              <label className="col-span-1 md:col-span-2 flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   Specialty
                 </span>
-                <input
+                <textarea
                   value={formState.specialty}
                   onChange={(event) =>
                     updateField("specialty", event.target.value)
                   }
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="min-h-[80px] rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
                   placeholder="e.g., Addictions, medication evaluation,Testing and Evaluation..."
                 />
               </label>
@@ -1071,7 +1071,7 @@ export default function DashboardPage() {
                   <label className="flex items-center gap-2">
                     <input
                       type="checkbox"
-                      checked={formState.practice_type.includes("therapy_only")}
+                      checked={formState.practice_type.includes("therapy")}
                       onChange={(event) =>
                         updateArrayField(
                           "practice_type",
@@ -1086,7 +1086,9 @@ export default function DashboardPage() {
                   <label className="flex items-center gap-2">
                     <input
                       type="checkbox"
-                      checked={formState.practice_type.includes("Therapy")}
+                      checked={formState.practice_type.includes(
+                        "psychiatry_therapy"
+                      )}
                       onChange={(event) =>
                         updateArrayField(
                           "practice_type",
@@ -1191,19 +1193,6 @@ export default function DashboardPage() {
                     <input
                       type="radio"
                       name="primary_location"
-                      value="fayetteville"
-                      checked={formState.primary_location === "fayetteville"}
-                      onChange={(event) =>
-                        updateField("primary_location", event.target.value)
-                      }
-                      className="text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="text-sm text-slate-700">Fayetteville</span>
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      name="primary_location"
                       value="apex"
                       checked={formState.primary_location === "apex"}
                       onChange={(event) =>
@@ -1255,84 +1244,7 @@ export default function DashboardPage() {
                   <option value="false">No</option>
                 </select>
               </label>
-              <label className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">
-                  For therapists: Please indicate the types of therapy you
-                  provide (select all that apply).
-                </span>
-                <div className="space-y-2">
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={formState.types_of_therapy.includes(
-                        "Psychiatry Only"
-                      )}
-                      onChange={(event) =>
-                        updateArrayField(
-                          "types_of_therapy",
-                          "Psychiatry Only",
-                          event.target.checked
-                        )
-                      }
-                      className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="text-sm text-slate-700">
-                      Psychiatry Only
-                    </span>
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={formState.types_of_therapy.includes(
-                        "Therapy Only"
-                      )}
-                      onChange={(event) =>
-                        updateArrayField(
-                          "types_of_therapy",
-                          "Therapy Only",
-                          event.target.checked
-                        )
-                      }
-                      className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="text-sm text-slate-700">Therapy Only</span>
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={formState.types_of_therapy.includes(
-                        "Psychiatry + Therapy"
-                      )}
-                      onChange={(event) =>
-                        updateArrayField(
-                          "types_of_therapy",
-                          "Psychiatry + Therapy",
-                          event.target.checked
-                        )
-                      }
-                      className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="text-sm text-slate-700">
-                      Psychiatry + Therapy
-                    </span>
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={formState.types_of_therapy.includes("Other")}
-                      onChange={(event) =>
-                        updateArrayField(
-                          "types_of_therapy",
-                          "Other",
-                          event.target.checked
-                        )
-                      }
-                      className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="text-sm text-slate-700">Other</span>
-                  </label>
-                </div>
-              </label>
+
               <label className="col-span-1 md:col-span-2 flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   Please list all services your practice offers *
@@ -1346,20 +1258,7 @@ export default function DashboardPage() {
                   placeholder="Describe your services"
                 />
               </label>
-              <label className="col-span-1 md:col-span-2 flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">
-                  Tell us more about your practice so we can tailor our AI tool
-                  to better support your needs. *
-                </span>
-                <textarea
-                  value={formState.practice_details}
-                  onChange={(event) =>
-                    updateField("practice_details", event.target.value)
-                  }
-                  className="min-h-[100px] rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="Additional practice details"
-                />
-              </label>
+
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   What types of patients does your practice serve? (Select all
@@ -1593,21 +1492,6 @@ export default function DashboardPage() {
                 />
               </label>
 
-              {/* NPI Field */}
-              <label className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">
-                  Please enter the Health Care Professional In Charge National
-                  Provider Identifier (NPI) or Practice National Provider
-                  Identifier (NPI)
-                </span>
-                <input
-                  value={formState.npi}
-                  onChange={(event) => updateField("npi", event.target.value)}
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="e.g., 1234567890"
-                />
-              </label>
-
               {/* Visibility Package Field */}
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
@@ -1654,7 +1538,7 @@ export default function DashboardPage() {
                       high-traffic areas.
                     </span>
                   </label>
-                  <label className="flex items-center gap-2">
+                  {/* <label className="flex items-center gap-2">
                     <input
                       type="checkbox"
                       checked={formState.visibility_packages.includes(
@@ -1673,7 +1557,7 @@ export default function DashboardPage() {
                       Call To Action (CTA) Spot #2 ($28/month) - Optional if you
                       want extra visibility on rdumentalhealth.com year)
                     </span>
-                  </label>
+                  </label> */}
                 </div>
               </label>
 
@@ -1845,27 +1729,28 @@ export default function DashboardPage() {
               </label>
               <label className="col-span-1 md:col-span-2 flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  Description
+                  Description ({formState.description.length}/850)
                 </span>
                 <textarea
                   value={formState.description}
                   onChange={(event) =>
                     updateField("description", event.target.value)
                   }
+                  maxLength={850}
                   className="min-h-[140px] rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
                   placeholder="Summarize your services and approach"
                 />
               </label>
-              <label className="flex flex-col gap-2">
+              <label className="col-span-1 md:col-span-2 flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   Specialty
                 </span>
-                <input
+                <textarea
                   value={formState.specialty}
                   onChange={(event) =>
                     updateField("specialty", event.target.value)
                   }
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="min-h-[80px] rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
                   placeholder="e.g., Anxiety, Couples Counseling"
                 />
               </label>
@@ -1955,36 +1840,32 @@ export default function DashboardPage() {
                   <label className="flex items-center gap-2">
                     <input
                       type="checkbox"
-                      checked={formState.practice_type.includes(
-                        "psychiatry_only"
-                      )}
+                      checked={formState.practice_type.includes("psychiatry")}
                       onChange={(event) =>
                         updateArrayField(
                           "practice_type",
-                          "psychiatry_only",
+                          "psychiatry",
                           event.target.checked
                         )
                       }
                       className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
-                    <span className="text-sm text-slate-700">
-                      Psychiatry Only
-                    </span>
+                    <span className="text-sm text-slate-700">Psychiatry</span>
                   </label>
                   <label className="flex items-center gap-2">
                     <input
                       type="checkbox"
-                      checked={formState.practice_type.includes("therapy_only")}
+                      checked={formState.practice_type.includes("therapy")}
                       onChange={(event) =>
                         updateArrayField(
                           "practice_type",
-                          "therapy_only",
+                          "therapy",
                           event.target.checked
                         )
                       }
                       className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
-                    <span className="text-sm text-slate-700">Therapy Only</span>
+                    <span className="text-sm text-slate-700">Therapy</span>
                   </label>
                   <label className="flex items-center gap-2">
                     <input
@@ -2002,7 +1883,7 @@ export default function DashboardPage() {
                       className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
                     <span className="text-sm text-slate-700">
-                      Psychiatry + Therapy
+                      Mental Health Counseling
                     </span>
                   </label>
                   <label className="flex items-center gap-2">
@@ -2096,19 +1977,6 @@ export default function DashboardPage() {
                     <input
                       type="radio"
                       name="primary_location"
-                      value="fayetteville"
-                      checked={formState.primary_location === "fayetteville"}
-                      onChange={(event) =>
-                        updateField("primary_location", event.target.value)
-                      }
-                      className="text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="text-sm text-slate-700">Fayetteville</span>
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      name="primary_location"
                       value="apex"
                       checked={formState.primary_location === "apex"}
                       onChange={(event) =>
@@ -2160,84 +2028,7 @@ export default function DashboardPage() {
                   <option value="false">No</option>
                 </select>
               </label>
-              <label className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">
-                  For therapists: Please indicate the types of therapy you
-                  provide (select all that apply).
-                </span>
-                <div className="space-y-2">
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={formState.types_of_therapy.includes(
-                        "Psychiatry Only"
-                      )}
-                      onChange={(event) =>
-                        updateArrayField(
-                          "types_of_therapy",
-                          "Psychiatry Only",
-                          event.target.checked
-                        )
-                      }
-                      className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="text-sm text-slate-700">
-                      Psychiatry Only
-                    </span>
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={formState.types_of_therapy.includes(
-                        "Therapy Only"
-                      )}
-                      onChange={(event) =>
-                        updateArrayField(
-                          "types_of_therapy",
-                          "Therapy Only",
-                          event.target.checked
-                        )
-                      }
-                      className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="text-sm text-slate-700">Therapy Only</span>
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={formState.types_of_therapy.includes(
-                        "Psychiatry + Therapy"
-                      )}
-                      onChange={(event) =>
-                        updateArrayField(
-                          "types_of_therapy",
-                          "Psychiatry + Therapy",
-                          event.target.checked
-                        )
-                      }
-                      className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="text-sm text-slate-700">
-                      Psychiatry + Therapy
-                    </span>
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={formState.types_of_therapy.includes("Other")}
-                      onChange={(event) =>
-                        updateArrayField(
-                          "types_of_therapy",
-                          "Other",
-                          event.target.checked
-                        )
-                      }
-                      className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="text-sm text-slate-700">Other</span>
-                  </label>
-                </div>
-              </label>
+
               <label className="col-span-1 md:col-span-2 flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   Please list all services your practice offers *
@@ -2251,20 +2042,7 @@ export default function DashboardPage() {
                   placeholder="Describe your services"
                 />
               </label>
-              <label className="col-span-1 md:col-span-2 flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">
-                  Tell us more about your practice so we can tailor our AI tool
-                  to better support your needs. *
-                </span>
-                <textarea
-                  value={formState.practice_details}
-                  onChange={(event) =>
-                    updateField("practice_details", event.target.value)
-                  }
-                  className="min-h-[100px] rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="Additional practice details"
-                />
-              </label>
+
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   What types of patients does your practice serve? (Select all
@@ -2497,21 +2275,6 @@ export default function DashboardPage() {
                 />
               </label>
 
-              {/* NPI Field */}
-              <label className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">
-                  Please enter the Health Care Professional In Charge National
-                  Provider Identifier (NPI) or Practice National Provider
-                  Identifier (NPI)
-                </span>
-                <input
-                  value={formState.npi}
-                  onChange={(event) => updateField("npi", event.target.value)}
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="e.g., 1234567890"
-                />
-              </label>
-
               {/* Visibility Package Field */}
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
@@ -2534,7 +2297,7 @@ export default function DashboardPage() {
                       className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
                     <span className="text-sm text-slate-700">
-                      AI Search Tool only ($20/month or $220/year per practice)
+                      AI Search Tool only ($25/month) - Required to use this app
                     </span>
                   </label>
                   <label className="flex items-center gap-2">
@@ -2553,10 +2316,12 @@ export default function DashboardPage() {
                       className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
                     <span className="text-sm text-slate-700">
-                      Call To Action (CTA) Spot ($28 per month)
+                      $28/month per spot (optional) Gain extra visibility on
+                      rdumentalhealth.com by featuring your practice in
+                      high-traffic areas.
                     </span>
                   </label>
-                  <label className="flex items-center gap-2">
+                  {/* <label className="flex items-center gap-2">
                     <input
                       type="checkbox"
                       checked={formState.visibility_packages.includes(
@@ -2575,7 +2340,7 @@ export default function DashboardPage() {
                       Call To Action (CTA) Spot #2 ($28 per month or $308 per
                       year)
                     </span>
-                  </label>
+                  </label> */}
                 </div>
               </label>
 
@@ -2583,7 +2348,9 @@ export default function DashboardPage() {
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   If you selected a CTA spot, which mental health condition
-                  would you like to be featured under?
+                  would you like to be featured under? Just a heads-up:
+                  purchased slots vanish from the list below. With only a few,
+                  available, it's first come, first served.
                 </span>
                 <select
                   value={formState.mental_health_condition}
@@ -2651,7 +2418,7 @@ export default function DashboardPage() {
                     updateField("cta_message", event.target.value)
                   }
                   className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="e.g., Book your consultation today and take the first step towards better mental health."
+                  placeholder="e.g., Take the first step towards better mental health today."
                   rows={3}
                 />
               </label>
@@ -2743,11 +2510,11 @@ export default function DashboardPage() {
                   {formState.description || "Not set"}
                 </div>
               </div>
-              <div className="flex flex-col gap-2">
+              <div className="col-span-1 md:col-span-2 flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   Specialty
                 </span>
-                <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
+                <div className="min-h-[80px] rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
                   {formState.specialty || "Not set"}
                 </div>
               </div>
@@ -2827,15 +2594,7 @@ export default function DashboardPage() {
                     : "No"}
                 </div>
               </div>
-              <div className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">
-                  For therapists: Please indicate the types of therapy you
-                  provide (select all that apply).
-                </span>
-                <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
-                  {formatArrayField(formState.types_of_therapy) || "Not set"}
-                </div>
-              </div>
+
               <div className="col-span-1 md:col-span-2 flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   Please list all services your practice offers *
