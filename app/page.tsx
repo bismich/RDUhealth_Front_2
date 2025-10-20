@@ -10,19 +10,19 @@ import { useAuth } from "@/components/AuthProvider";
 
 const features = [
   {
-    title: "Unified practice hub",
+    title: " Connect with more clients—faster.",
     description:
-      "Keep bios, services, and availability polished with a beautiful profile editor that saves automatically.",
+      "Our smart referral tool helps more potential patients discover your website and appointment links with ease.",
   },
   {
-    title: "AI powered discovery",
+    title: "AI powered matching algorithm",
     description:
-      "Offer a guided chat experience that points people to the right practitioner in seconds.",
+      "You’ll only be matched with individuals actively seeking the specific services you provide.",
   },
   {
     title: "Meaningful analytics",
     description:
-      "See which questions are trending and which pages earn the most clicks — all in one dashboard.",
+      "No need to guess if referrals are coming your way —you can see real-time interactions with your website link directly on your dashboard.",
   },
 ];
 
@@ -67,19 +67,17 @@ export default function HomePage() {
                 beta
               </span>
               <h1 className="text-4xl font-semibold leading-tight text-slate-900 sm:text-5xl">
-                Modern tools for standout mental health practices
+                The 1st AI-powered referral tool for mental health professionals
               </h1>
               <p className="max-w-xl text-lg text-slate-600 mx-auto lg:mx-0">
-                RDU RAG SaaS blends practice management, AI-powered search, and
-                actionable insights into a single elegant workspace. Delight
-                prospective clients while keeping your team focused on care.
+                Be discoverable through a locally focused, intelligent search experience that connects individuals with the right mental health providers.
               </p>
               <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
                 <Link
                   href="/signup"
                   className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:shadow-blue-500/50"
                 >
-                  Get started free
+                  Sign Up Today
                 </Link>
                 <Link
                   href="/login"
@@ -97,10 +95,10 @@ export default function HomePage() {
               <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-slate-500 justify-center lg:justify-start">
                 <span className="inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 shadow-sm">
                   <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />{" "}
-                  HIPAA aware infrastructure
+                  We send potential patients to you
                 </span>
                 <span>
-                  Human friendly • AI assisted • Built for the Triangle
+                  Easy to use • AI assisted • Built for the Triangle area
                 </span>
               </div>
             </div>
@@ -140,15 +138,13 @@ export default function HomePage() {
 
           <section className="flex flex-col items-center gap-6 rounded-[32px] border border-blue-100 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 px-10 py-12 text-center text-white shadow-xl">
             <p className="text-sm uppercase tracking-[0.3em] text-white/70">
-              Now scheduling demos
+              Meaningful Visibility
             </p>
             <h2 className="max-w-2xl text-3xl font-semibold">
-              Ready to transform how prospective clients discover and trust your
-              practice?
+              From local outreach to online ads, we’re making sure the community knows about this tool—and knows how to find you
             </h2>
             <p className="max-w-2xl text-base text-white/80">
-              Create an account, publish a stunning profile, and see how
-              AI-assisted search elevates your reach within minutes.
+              Register your practice today and join a growing community of healthcare professionals using this AI-powered referral tool to expand their caseloads
             </p>
             <div className="flex flex-wrap justify-center gap-3">
               <Link

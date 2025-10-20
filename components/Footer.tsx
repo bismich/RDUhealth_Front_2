@@ -8,11 +8,10 @@ export function Footer() {
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-6 py-10 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-1">
           <Link href="/" className="text-base font-semibold text-slate-900">
-            RDU RAG SaaS
+            Urizon Health - RDU Area
           </Link>
           <p className="max-w-md text-xs text-slate-500">
-            Purpose-built tools for modern behavioral health practices in the
-            Triangle.
+            The 1st AI-powered referral tool for mental health professionals
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-4">
@@ -30,7 +29,7 @@ export function Footer() {
           </Link>
         </div>
         <p className="text-xs text-slate-400">
-          © {year} RDU RAG Labs. All rights reserved.
+          © {year} Urizon Solutions, LLC. All rights reserved.
         </p>
       </div>
     </footer>

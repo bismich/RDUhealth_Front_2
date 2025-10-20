@@ -65,15 +65,13 @@ export default function ContactPage() {
         <div className="mx-auto flex w-full max-w-3xl flex-col gap-10 px-6 py-20">
           <div className="space-y-3 text-center">
             <span className="inline-flex w-fit items-center gap-2 rounded-full bg-blue-100/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-blue-600">
-              <span className="h-1.5 w-1.5 rounded-full bg-blue-500" /> Let's
-              talk
+              <span className="h-1.5 w-1.5 rounded-full bg-blue-500" /> Contact Us
             </span>
             <h1 className="text-4xl font-semibold text-slate-900">
-              Partner with the RDU RAG team
+              Reach out to your team
             </h1>
             <p className="text-base text-slate-600">
-              Tell us a bit about your practice and we'll follow up within one
-              business day.
+              If you encounter any issues, have suggestions, or are interested in partnering with us, please don’t hesitate to reach out. Our team will respond within 24–48 hours.
             </p>
           </div>
 
@@ -133,7 +131,7 @@ export default function ContactPage() {
                 onChange={(event) =>
                   setForm((prev) => ({ ...prev, message: event.target.value }))
                 }
-                placeholder="Share what you're hoping to accomplish, existing tooling, or timelines."
+                placeholder="Please describe your query in details."
                 rows={6}
                 className="rounded-2xl border border-slate-200 bg-white/80 px-4 py-3 text-base text-slate-900 shadow-inner focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
               />
@@ -141,7 +139,7 @@ export default function ContactPage() {
 
             {status === "success" && (
               <p className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-                Thanks! A member of the RDU RAG team will reach out shortly.
+                Thanks! A member of our team will reach out shortly.
               </p>
             )}
 
