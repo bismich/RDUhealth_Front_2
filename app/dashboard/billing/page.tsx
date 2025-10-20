@@ -309,17 +309,23 @@ export default function BillingPage() {
                 {plan === "cta" && selectedPlan === "cta" && (
                   <div className="flex flex-col gap-2">
                     <label className="text-sm font-medium text-slate-700">
-                      CTA Spots
+                      CTA Spots (max 4)
                     </label>
                     <input
                       type="number"
                       min={1}
+                      max={4}
                       value={ctaSpots}
                       onChange={(event) =>
-                        setCtaSpots(Number(event.target.value) || 1)
+                        setCtaSpots(
+                          Math.min(Number(event.target.value) || 1, 4)
+                        )
                       }
                       className="w-24 rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-400 focus:outline-none focus:ring"
                     />
+                    <p className="text-xs text-slate-500">
+                      Maximum 4 CTA spots per subscription
+                    </p>
                   </div>
                 )}
               </label>

@@ -25,7 +25,7 @@ type Practice = {
   practice_details: string;
   patient_types: string[];
   ethnicity: string[];
-  gender_identity: string;
+  gender_identity: string[];
   additional_demographic_details: string;
   accepted_insurance_plans: string;
   self_pay_rate_of_services: string;
@@ -41,7 +41,7 @@ type Practice = {
   business_hours: string;
   npi: string;
   visibility_packages: string[];
-  mental_health_condition: string;
+  mental_health_condition: string[];
   cta_message: string;
   public_token: string;
   embedding?: {
@@ -69,7 +69,7 @@ type PracticeFormState = {
   practice_details: string;
   patient_types: string[];
   ethnicity: string[];
-  gender_identity: string;
+  gender_identity: string[];
   additional_demographic_details: string;
   accepted_insurance_plans: string;
   self_pay_rate_of_services: string;
@@ -85,7 +85,7 @@ type PracticeFormState = {
   business_hours: string;
   npi: string;
   visibility_packages: string[];
-  mental_health_condition: string;
+  mental_health_condition: string[];
   cta_message: string;
   public_token: string | null;
   embeddingUpdatedAt: string | null;
@@ -142,7 +142,7 @@ const initialFormState = (): PracticeFormState => ({
   practice_details: "",
   patient_types: [],
   ethnicity: [],
-  gender_identity: "",
+  gender_identity: [],
   additional_demographic_details: "",
   accepted_insurance_plans: "",
   self_pay_rate_of_services: "",
@@ -158,7 +158,7 @@ const initialFormState = (): PracticeFormState => ({
   business_hours: "",
   npi: "",
   visibility_packages: [],
-  mental_health_condition: "",
+  mental_health_condition: [],
   cta_message: "",
   public_token: null,
   embeddingUpdatedAt: null,
@@ -191,19 +191,21 @@ const getPrimaryLocationDisplay = (value: string): string => {
     raleigh: "Raleigh",
     cary: "Cary",
     morrisville: "Morrisville",
+    fayetteville: "Fayetteville",
     apex: "Apex",
   };
   return locationMap[value] || value || "Not set";
 };
 
-const getGenderIdentityDisplay = (value: string): string => {
+const getGenderIdentityDisplay = (value: string[]): string => {
+  if (!value || value.length === 0) return "Not set";
   const genderMap: Record<string, string> = {
     male_only: "Male staff only",
     female_only: "Female staff only",
     both: "Both Male and Female staff",
     non_binary: "Non Binary staff",
   };
-  return genderMap[value] || value || "Not set";
+  return value.map((v) => genderMap[v] || v).join(", ");
 };
 
 const getSeePatientTypeDisplay = (value: string): string => {
@@ -233,7 +235,8 @@ const getVisibilityPackageDisplay = (value: string): string => {
   return packageMap[value] || value || "Not set";
 };
 
-const getMentalHealthConditionDisplay = (value: string): string => {
+const getMentalHealthConditionDisplay = (value: string[]): string => {
+  if (!value || value.length === 0) return "Not set";
   const conditionMap: Record<string, string> = {
     depression: "Depression (Major Depressive Disorder)",
     generalized_anxiety: "Generalized Anxiety Disorder (GAD)",
@@ -256,7 +259,7 @@ const getMentalHealthConditionDisplay = (value: string): string => {
     histrionic_personality: "Histrionic Personality Disorder",
     panic_disorder: "Panic Disorder",
   };
-  return conditionMap[value] || value || "Not set";
+  return value.map((v) => conditionMap[v] || v).join(", ");
 };
 
 export default function DashboardPage() {
@@ -367,7 +370,7 @@ export default function DashboardPage() {
         practice_details: existing.practice_details ?? "",
         patient_types: parseArrayField(existing.patient_types ?? ""),
         ethnicity: parseArrayField(existing.ethnicity ?? ""),
-        gender_identity: existing.gender_identity ?? "",
+        gender_identity: parseArrayField(existing.gender_identity ?? ""),
         additional_demographic_details:
           existing.additional_demographic_details ?? "",
         accepted_insurance_plans: existing.accepted_insurance_plans ?? "",
@@ -384,7 +387,9 @@ export default function DashboardPage() {
         business_hours: existing.business_hours ?? "",
         npi: existing.npi ?? "",
         visibility_packages: existing.visibility_packages ?? [],
-        mental_health_condition: existing.mental_health_condition ?? "",
+        mental_health_condition: parseArrayField(
+          existing.mental_health_condition ?? ""
+        ),
         cta_message: existing.cta_message ?? "",
         public_token: existing.public_token ?? null,
         embeddingUpdatedAt: existing.embedding?.updated_at ?? null,
@@ -504,7 +509,9 @@ export default function DashboardPage() {
         | "patient_types"
         | "ethnicity"
         | "types_of_therapy"
-        | "visibility_packages",
+        | "visibility_packages"
+        | "gender_identity"
+        | "mental_health_condition",
       value: string,
       checked: boolean
     ) => {
@@ -560,7 +567,7 @@ export default function DashboardPage() {
         practice_details: existing.practice_details ?? "",
         patient_types: parseArrayField(existing.patient_types ?? ""),
         ethnicity: parseArrayField(existing.ethnicity ?? ""),
-        gender_identity: existing.gender_identity ?? "",
+        gender_identity: parseArrayField(existing.gender_identity ?? ""),
         additional_demographic_details:
           existing.additional_demographic_details ?? "",
         accepted_insurance_plans: existing.accepted_insurance_plans ?? "",
@@ -577,7 +584,9 @@ export default function DashboardPage() {
         business_hours: existing.business_hours ?? "",
         npi: existing.npi ?? "",
         visibility_packages: existing.visibility_packages ?? [],
-        mental_health_condition: existing.mental_health_condition ?? "",
+        mental_health_condition: parseArrayField(
+          existing.mental_health_condition ?? ""
+        ),
         cta_message: existing.cta_message ?? "",
         public_token: existing.public_token ?? null,
         embeddingUpdatedAt: existing.embedding?.updated_at ?? null,
@@ -1050,38 +1059,53 @@ export default function DashboardPage() {
               </label>
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
+                  NPI Number
+                </span>
+                <input
+                  value={formState.npi}
+                  onChange={(event) => updateField("npi", event.target.value)}
+                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  placeholder="1234567890"
+                />
+              </label>
+              <label className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">
                   Select Your Practice Type *
                 </span>
                 <div className="space-y-2">
                   <label className="flex items-center gap-2">
                     <input
                       type="checkbox"
-                      checked={formState.practice_type.includes("psychiatry")}
+                      checked={formState.practice_type.includes(
+                        "psychiatry_only"
+                      )}
                       onChange={(event) =>
                         updateArrayField(
                           "practice_type",
-                          "psychiatry",
+                          "psychiatry_only",
                           event.target.checked
                         )
                       }
                       className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
-                    <span className="text-sm text-slate-700">Psychiatry</span>
+                    <span className="text-sm text-slate-700">
+                      Psychiatry Only
+                    </span>
                   </label>
                   <label className="flex items-center gap-2">
                     <input
                       type="checkbox"
-                      checked={formState.practice_type.includes("therapy")}
+                      checked={formState.practice_type.includes("therapy_only")}
                       onChange={(event) =>
                         updateArrayField(
                           "practice_type",
-                          "therapy",
+                          "therapy_only",
                           event.target.checked
                         )
                       }
                       className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
-                    <span className="text-sm text-slate-700">Therapy</span>
+                    <span className="text-sm text-slate-700">Therapy Only</span>
                   </label>
                   <label className="flex items-center gap-2">
                     <input
@@ -1193,6 +1217,19 @@ export default function DashboardPage() {
                     <input
                       type="radio"
                       name="primary_location"
+                      value="fayetteville"
+                      checked={formState.primary_location === "fayetteville"}
+                      onChange={(event) =>
+                        updateField("primary_location", event.target.value)
+                      }
+                      className="text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-slate-700">Fayetteville</span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="primary_location"
                       value="apex"
                       checked={formState.primary_location === "apex"}
                       onChange={(event) =>
@@ -1257,6 +1294,59 @@ export default function DashboardPage() {
                   className="min-h-[100px] rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
                   placeholder="Describe your services"
                 />
+              </label>
+
+              <label className="col-span-1 md:col-span-2 flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">
+                  Tell us more about your practice so we can tailor our AI tool
+                  to better support your needs. *
+                </span>
+                <textarea
+                  value={formState.practice_details}
+                  onChange={(event) =>
+                    updateField("practice_details", event.target.value)
+                  }
+                  className="min-h-[100px] rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  placeholder="Describe your practice details"
+                />
+              </label>
+
+              <label className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">
+                  What types of therapy do you offer? (Select all that apply)
+                </span>
+                <div className="space-y-2">
+                  {[
+                    "Individual Therapy",
+                    "Couples Therapy",
+                    "Family Therapy",
+                    "Group Therapy",
+                    "Cognitive Behavioral Therapy (CBT)",
+                    "Dialectical Behavior Therapy (DBT)",
+                    "Psychodynamic Therapy",
+                    "Humanistic Therapy",
+                    "Trauma Therapy",
+                    "Art Therapy",
+                    "Play Therapy",
+                    "Other",
+                  ].map((option) => (
+                    <label key={option} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={formState.types_of_therapy.includes(option)}
+                        onChange={(event) =>
+                          updateArrayField(
+                            "types_of_therapy",
+                            option,
+                            event.target.checked
+                          )
+                        }
+                        className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                      />
+                      <span className="text-sm text-slate-700">{option}</span>
+                    </label>
+                  ))}
+                </div>
               </label>
 
               <label className="flex flex-col gap-2">
@@ -1329,19 +1419,32 @@ export default function DashboardPage() {
                   Please select the gender identity or identities that apply to
                   you or your clinical staff (select all that apply).
                 </span>
-                <select
-                  value={formState.gender_identity}
-                  onChange={(event) =>
-                    updateField("gender_identity", event.target.value)
-                  }
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                >
-                  <option value="">Select gender identity</option>
-                  <option value="male_only">Male only</option>
-                  <option value="female_only">Female only</option>
-                  <option value="both">Both Male and Female</option>
-                  <option value="non_binary">Non Binary</option>
-                </select>
+                <div className="space-y-2">
+                  {["male_only", "female_only", "both", "non_binary"].map(
+                    (option) => (
+                      <label key={option} className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={formState.gender_identity.includes(option)}
+                          onChange={(event) =>
+                            updateArrayField(
+                              "gender_identity",
+                              option,
+                              event.target.checked
+                            )
+                          }
+                          className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                        />
+                        <span className="text-sm text-slate-700">
+                          {option === "male_only" && "Male staff only"}
+                          {option === "female_only" && "Female staff only"}
+                          {option === "both" && "Both Male and Female staff"}
+                          {option === "non_binary" && "Non Binary staff"}
+                        </span>
+                      </label>
+                    )
+                  )}
+                </div>
               </label>
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
@@ -1491,6 +1594,37 @@ export default function DashboardPage() {
                   placeholder="e.g., Mon-Fri 9AM-5PM"
                 />
               </label>
+              <label className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">City</span>
+                <input
+                  value={formState.city}
+                  onChange={(event) => updateField("city", event.target.value)}
+                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  placeholder="Raleigh"
+                />
+              </label>
+              <label className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">
+                  State
+                </span>
+                <input
+                  value={formState.state}
+                  onChange={(event) => updateField("state", event.target.value)}
+                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  placeholder="NC"
+                />
+              </label>
+              <label className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">
+                  ZIP Code
+                </span>
+                <input
+                  value={formState.zip}
+                  onChange={(event) => updateField("zip", event.target.value)}
+                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  placeholder="27601"
+                />
+              </label>
 
               {/* Visibility Package Field */}
               <label className="flex flex-col gap-2">
@@ -1514,7 +1648,7 @@ export default function DashboardPage() {
                       className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
                     <span className="text-sm text-slate-700">
-                      AI Search Tool only ($25/month) - Required to use this app
+                      AI Search Tool only ($20/month) - Required to use this app
                     </span>
                   </label>
                   <label className="flex items-center gap-2">
@@ -1569,58 +1703,79 @@ export default function DashboardPage() {
                   purchased slots vanish from the list below. With only a few,
                   available, it’s first come, first served.
                 </span>
-                <select
-                  value={formState.mental_health_condition}
-                  onChange={(event) =>
-                    updateField("mental_health_condition", event.target.value)
-                  }
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                >
-                  <option value="">Select a condition</option>
-                  <option value="depression">
-                    Depression (Major Depressive Disorder)
-                  </option>
-                  <option value="generalized_anxiety">
-                    Generalized Anxiety Disorder (GAD)
-                  </option>
-                  <option value="social_anxiety">
-                    Social Anxiety Disorder
-                  </option>
-                  <option value="ptsd">
-                    Post-Traumatic Stress Disorder (PTSD)
-                  </option>
-                  <option value="ocd">
-                    Obsessive-Compulsive Disorder (OCD)
-                  </option>
-                  <option value="bipolar">Bipolar Disorder</option>
-                  <option value="bpd">
-                    Borderline Personality Disorder (BPD)
-                  </option>
-                  <option value="schizophrenia">Schizophrenia</option>
-                  <option value="eating_disorders">
-                    Eating Disorders (Anorexia, Bulimia, Binge Eating Disorder)
-                  </option>
-                  <option value="dysthymia">
-                    Dysthymia (Persistent Depressive Disorder)
-                  </option>
-                  <option value="specific_phobias">Specific Phobias</option>
-                  <option value="agoraphobia">Agoraphobia</option>
-                  <option value="substance_use">Substance Use Disorder</option>
-                  <option value="autism_spectrum">
-                    Autism Spectrum Disorder (ASD)
-                  </option>
-                  <option value="adjustment_disorder">
-                    Adjustment Disorder
-                  </option>
-                  <option value="insomnia">Insomnia Disorder</option>
-                  <option value="somatic_symptom">
-                    Somatic Symptom Disorder
-                  </option>
-                  <option value="histrionic_personality">
-                    Histrionic Personality Disorder
-                  </option>
-                  <option value="panic_disorder">Panic Disorder</option>
-                </select>
+                <div className="space-y-2">
+                  {[
+                    "depression",
+                    "generalized_anxiety",
+                    "social_anxiety",
+                    "ptsd",
+                    "ocd",
+                    "bipolar",
+                    "bpd",
+                    "schizophrenia",
+                    "eating_disorders",
+                    "dysthymia",
+                    "specific_phobias",
+                    "agoraphobia",
+                    "substance_use",
+                    "autism_spectrum",
+                    "adjustment_disorder",
+                    "insomnia",
+                    "somatic_symptom",
+                    "histrionic_personality",
+                    "panic_disorder",
+                  ].map((option) => (
+                    <label key={option} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={formState.mental_health_condition.includes(
+                          option
+                        )}
+                        onChange={(event) =>
+                          updateArrayField(
+                            "mental_health_condition",
+                            option,
+                            event.target.checked
+                          )
+                        }
+                        className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                      />
+                      <span className="text-sm text-slate-700">
+                        {option === "depression" &&
+                          "Depression (Major Depressive Disorder)"}
+                        {option === "generalized_anxiety" &&
+                          "Generalized Anxiety Disorder (GAD)"}
+                        {option === "social_anxiety" &&
+                          "Social Anxiety Disorder"}
+                        {option === "ptsd" &&
+                          "Post-Traumatic Stress Disorder (PTSD)"}
+                        {option === "ocd" &&
+                          "Obsessive-Compulsive Disorder (OCD)"}
+                        {option === "bipolar" && "Bipolar Disorder"}
+                        {option === "bpd" &&
+                          "Borderline Personality Disorder (BPD)"}
+                        {option === "schizophrenia" && "Schizophrenia"}
+                        {option === "eating_disorders" &&
+                          "Eating Disorders (Anorexia, Bulimia, Binge Eating Disorder)"}
+                        {option === "dysthymia" &&
+                          "Dysthymia (Persistent Depressive Disorder)"}
+                        {option === "specific_phobias" && "Specific Phobias"}
+                        {option === "agoraphobia" && "Agoraphobia"}
+                        {option === "substance_use" && "Substance Use Disorder"}
+                        {option === "autism_spectrum" &&
+                          "Autism Spectrum Disorder (ASD)"}
+                        {option === "adjustment_disorder" &&
+                          "Adjustment Disorder"}
+                        {option === "insomnia" && "Insomnia Disorder"}
+                        {option === "somatic_symptom" &&
+                          "Somatic Symptom Disorder"}
+                        {option === "histrionic_personality" &&
+                          "Histrionic Personality Disorder"}
+                        {option === "panic_disorder" && "Panic Disorder"}
+                      </span>
+                    </label>
+                  ))}
+                </div>
               </label>
 
               {/* CTA Message Field */}
@@ -1840,32 +1995,36 @@ export default function DashboardPage() {
                   <label className="flex items-center gap-2">
                     <input
                       type="checkbox"
-                      checked={formState.practice_type.includes("psychiatry")}
+                      checked={formState.practice_type.includes(
+                        "psychiatry_only"
+                      )}
                       onChange={(event) =>
                         updateArrayField(
                           "practice_type",
-                          "psychiatry",
+                          "psychiatry_only",
                           event.target.checked
                         )
                       }
                       className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
-                    <span className="text-sm text-slate-700">Psychiatry</span>
+                    <span className="text-sm text-slate-700">
+                      Psychiatry Only
+                    </span>
                   </label>
                   <label className="flex items-center gap-2">
                     <input
                       type="checkbox"
-                      checked={formState.practice_type.includes("therapy")}
+                      checked={formState.practice_type.includes("therapy_only")}
                       onChange={(event) =>
                         updateArrayField(
                           "practice_type",
-                          "therapy",
+                          "therapy_only",
                           event.target.checked
                         )
                       }
                       className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
-                    <span className="text-sm text-slate-700">Therapy</span>
+                    <span className="text-sm text-slate-700">Therapy Only</span>
                   </label>
                   <label className="flex items-center gap-2">
                     <input
@@ -1977,6 +2136,19 @@ export default function DashboardPage() {
                     <input
                       type="radio"
                       name="primary_location"
+                      value="fayetteville"
+                      checked={formState.primary_location === "fayetteville"}
+                      onChange={(event) =>
+                        updateField("primary_location", event.target.value)
+                      }
+                      className="text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-slate-700">Fayetteville</span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="primary_location"
                       value="apex"
                       checked={formState.primary_location === "apex"}
                       onChange={(event) =>
@@ -2041,6 +2213,59 @@ export default function DashboardPage() {
                   className="min-h-[100px] rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
                   placeholder="Describe your services"
                 />
+              </label>
+
+              <label className="col-span-1 md:col-span-2 flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">
+                  Tell us more about your practice so we can tailor our AI tool
+                  to better support your needs. *
+                </span>
+                <textarea
+                  value={formState.practice_details}
+                  onChange={(event) =>
+                    updateField("practice_details", event.target.value)
+                  }
+                  className="min-h-[100px] rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  placeholder="Describe your practice details"
+                />
+              </label>
+
+              <label className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">
+                  What types of therapy do you offer? (Select all that apply)
+                </span>
+                <div className="space-y-2">
+                  {[
+                    "Individual Therapy",
+                    "Couples Therapy",
+                    "Family Therapy",
+                    "Group Therapy",
+                    "Cognitive Behavioral Therapy (CBT)",
+                    "Dialectical Behavior Therapy (DBT)",
+                    "Psychodynamic Therapy",
+                    "Humanistic Therapy",
+                    "Trauma Therapy",
+                    "Art Therapy",
+                    "Play Therapy",
+                    "Other",
+                  ].map((option) => (
+                    <label key={option} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={formState.types_of_therapy.includes(option)}
+                        onChange={(event) =>
+                          updateArrayField(
+                            "types_of_therapy",
+                            option,
+                            event.target.checked
+                          )
+                        }
+                        className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                      />
+                      <span className="text-sm text-slate-700">{option}</span>
+                    </label>
+                  ))}
+                </div>
               </label>
 
               <label className="flex flex-col gap-2">
@@ -2113,19 +2338,32 @@ export default function DashboardPage() {
                   Please select the gender identity or identities that apply to
                   you or your clinical staff (select all that apply).
                 </span>
-                <select
-                  value={formState.gender_identity}
-                  onChange={(event) =>
-                    updateField("gender_identity", event.target.value)
-                  }
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                >
-                  <option value="">Select gender identity</option>
-                  <option value="male_only">Male only</option>
-                  <option value="female_only">Female only</option>
-                  <option value="both">Both Male and Female</option>
-                  <option value="non_binary">Non Binary</option>
-                </select>
+                <div className="space-y-2">
+                  {["male_only", "female_only", "both", "non_binary"].map(
+                    (option) => (
+                      <label key={option} className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={formState.gender_identity.includes(option)}
+                          onChange={(event) =>
+                            updateArrayField(
+                              "gender_identity",
+                              option,
+                              event.target.checked
+                            )
+                          }
+                          className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                        />
+                        <span className="text-sm text-slate-700">
+                          {option === "male_only" && "Male staff only"}
+                          {option === "female_only" && "Female staff only"}
+                          {option === "both" && "Both Male and Female staff"}
+                          {option === "non_binary" && "Non Binary staff"}
+                        </span>
+                      </label>
+                    )
+                  )}
+                </div>
               </label>
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
@@ -2274,6 +2512,37 @@ export default function DashboardPage() {
                   placeholder="e.g., Mon-Fri 9AM-5PM"
                 />
               </label>
+              <label className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">City</span>
+                <input
+                  value={formState.city}
+                  onChange={(event) => updateField("city", event.target.value)}
+                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  placeholder="Raleigh"
+                />
+              </label>
+              <label className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">
+                  State
+                </span>
+                <input
+                  value={formState.state}
+                  onChange={(event) => updateField("state", event.target.value)}
+                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  placeholder="NC"
+                />
+              </label>
+              <label className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">
+                  ZIP Code
+                </span>
+                <input
+                  value={formState.zip}
+                  onChange={(event) => updateField("zip", event.target.value)}
+                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  placeholder="27601"
+                />
+              </label>
 
               {/* Visibility Package Field */}
               <label className="flex flex-col gap-2">
@@ -2297,7 +2566,7 @@ export default function DashboardPage() {
                       className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
                     <span className="text-sm text-slate-700">
-                      AI Search Tool only ($25/month) - Required to use this app
+                      AI Search Tool only ($20/month) - Required to use this app
                     </span>
                   </label>
                   <label className="flex items-center gap-2">
@@ -2352,58 +2621,79 @@ export default function DashboardPage() {
                   purchased slots vanish from the list below. With only a few,
                   available, it's first come, first served.
                 </span>
-                <select
-                  value={formState.mental_health_condition}
-                  onChange={(event) =>
-                    updateField("mental_health_condition", event.target.value)
-                  }
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                >
-                  <option value="">Select a condition</option>
-                  <option value="depression">
-                    Depression (Major Depressive Disorder)
-                  </option>
-                  <option value="generalized_anxiety">
-                    Generalized Anxiety Disorder (GAD)
-                  </option>
-                  <option value="social_anxiety">
-                    Social Anxiety Disorder
-                  </option>
-                  <option value="ptsd">
-                    Post-Traumatic Stress Disorder (PTSD)
-                  </option>
-                  <option value="ocd">
-                    Obsessive-Compulsive Disorder (OCD)
-                  </option>
-                  <option value="bipolar">Bipolar Disorder</option>
-                  <option value="bpd">
-                    Borderline Personality Disorder (BPD)
-                  </option>
-                  <option value="schizophrenia">Schizophrenia</option>
-                  <option value="eating_disorders">
-                    Eating Disorders (Anorexia, Bulimia, Binge Eating Disorder)
-                  </option>
-                  <option value="dysthymia">
-                    Dysthymia (Persistent Depressive Disorder)
-                  </option>
-                  <option value="specific_phobias">Specific Phobias</option>
-                  <option value="agoraphobia">Agoraphobia</option>
-                  <option value="substance_use">Substance Use Disorder</option>
-                  <option value="autism_spectrum">
-                    Autism Spectrum Disorder (ASD)
-                  </option>
-                  <option value="adjustment_disorder">
-                    Adjustment Disorder
-                  </option>
-                  <option value="insomnia">Insomnia Disorder</option>
-                  <option value="somatic_symptom">
-                    Somatic Symptom Disorder
-                  </option>
-                  <option value="histrionic_personality">
-                    Histrionic Personality Disorder
-                  </option>
-                  <option value="panic_disorder">Panic Disorder</option>
-                </select>
+                <div className="space-y-2">
+                  {[
+                    "depression",
+                    "generalized_anxiety",
+                    "social_anxiety",
+                    "ptsd",
+                    "ocd",
+                    "bipolar",
+                    "bpd",
+                    "schizophrenia",
+                    "eating_disorders",
+                    "dysthymia",
+                    "specific_phobias",
+                    "agoraphobia",
+                    "substance_use",
+                    "autism_spectrum",
+                    "adjustment_disorder",
+                    "insomnia",
+                    "somatic_symptom",
+                    "histrionic_personality",
+                    "panic_disorder",
+                  ].map((option) => (
+                    <label key={option} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={formState.mental_health_condition.includes(
+                          option
+                        )}
+                        onChange={(event) =>
+                          updateArrayField(
+                            "mental_health_condition",
+                            option,
+                            event.target.checked
+                          )
+                        }
+                        className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                      />
+                      <span className="text-sm text-slate-700">
+                        {option === "depression" &&
+                          "Depression (Major Depressive Disorder)"}
+                        {option === "generalized_anxiety" &&
+                          "Generalized Anxiety Disorder (GAD)"}
+                        {option === "social_anxiety" &&
+                          "Social Anxiety Disorder"}
+                        {option === "ptsd" &&
+                          "Post-Traumatic Stress Disorder (PTSD)"}
+                        {option === "ocd" &&
+                          "Obsessive-Compulsive Disorder (OCD)"}
+                        {option === "bipolar" && "Bipolar Disorder"}
+                        {option === "bpd" &&
+                          "Borderline Personality Disorder (BPD)"}
+                        {option === "schizophrenia" && "Schizophrenia"}
+                        {option === "eating_disorders" &&
+                          "Eating Disorders (Anorexia, Bulimia, Binge Eating Disorder)"}
+                        {option === "dysthymia" &&
+                          "Dysthymia (Persistent Depressive Disorder)"}
+                        {option === "specific_phobias" && "Specific Phobias"}
+                        {option === "agoraphobia" && "Agoraphobia"}
+                        {option === "substance_use" && "Substance Use Disorder"}
+                        {option === "autism_spectrum" &&
+                          "Autism Spectrum Disorder (ASD)"}
+                        {option === "adjustment_disorder" &&
+                          "Adjustment Disorder"}
+                        {option === "insomnia" && "Insomnia Disorder"}
+                        {option === "somatic_symptom" &&
+                          "Somatic Symptom Disorder"}
+                        {option === "histrionic_personality" &&
+                          "Histrionic Personality Disorder"}
+                        {option === "panic_disorder" && "Panic Disorder"}
+                      </span>
+                    </label>
+                  ))}
+                </div>
               </label>
 
               {/* CTA Message Field */}
@@ -2614,6 +2904,14 @@ export default function DashboardPage() {
               </div>
               <div className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
+                  What types of therapy do you offer? (Select all that apply)
+                </span>
+                <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
+                  {formatArrayField(formState.types_of_therapy) || "Not set"}
+                </div>
+              </div>
+              <div className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">
                   What types of patients does your practice serve? (Select all
                   that apply) *
                 </span>
@@ -2623,7 +2921,8 @@ export default function DashboardPage() {
               </div>
               <div className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  Ethnicity
+                  Ethnicity (optional) (Select all that apply to the members of
+                  your practice.)
                 </span>
                 <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
                   {formatArrayField(formState.ethnicity) || "Not set"}
@@ -2640,7 +2939,7 @@ export default function DashboardPage() {
               </div>
               <div className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  Additional Demographic Details
+                  Add additional demographic details (optional):
                 </span>
                 <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
                   {formState.additional_demographic_details || "Not set"}
@@ -2713,6 +3012,29 @@ export default function DashboardPage() {
                 </span>
                 <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
                   {formState.business_hours || "Not set"}
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">City</span>
+                <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
+                  {formState.city || "Not set"}
+                </div>
+              </div>
+              <div className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">
+                  State
+                </span>
+                <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
+                  {formState.state || "Not set"}
+                </div>
+              </div>
+              <div className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">
+                  ZIP Code
+                </span>
+                <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
+                  {formState.zip || "Not set"}
                 </div>
               </div>
 
