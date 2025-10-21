@@ -191,7 +191,6 @@ const getPrimaryLocationDisplay = (value: string): string => {
     raleigh: "Raleigh",
     cary: "Cary",
     morrisville: "Morrisville",
-    fayetteville: "Fayetteville",
     apex: "Apex",
   };
   return locationMap[value] || value || "Not set";
@@ -842,18 +841,12 @@ export default function DashboardPage() {
               </p>
               <div className="flex items-center gap-2 md:flex-row flex-col">
                 <code className="flex-1 truncate rounded-2xl border border-slate-200 bg-slate-900/90 px-4 py-3 font-mono text-xs text-slate-100 shadow-inner">
-                  {`${
-                    process.env.NEXT_PUBLIC_APP_ORIGIN ??
-                    "https://your-frontend"
-                  }/chat`}
+                  https://www.rdumentalhealth.app
                 </code>
                 <button
                   type="button"
                   onClick={() => {
-                    const chatUrl = `${
-                      process.env.NEXT_PUBLIC_APP_ORIGIN ??
-                      "https://your-frontend"
-                    }/chat`;
+                    const chatUrl = `https://www.rdumentalhealth.app/`;
                     navigator.clipboard.writeText(chatUrl);
                     setShowCopyToast(true);
                   }}
@@ -1057,17 +1050,7 @@ export default function DashboardPage() {
                   placeholder="Dr. John Smith,Psychiatrist, MD, PhD NPI: 1234567890&#10; Raleigh Therapy group NPI: 1987654321"
                 />
               </label>
-              <label className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">
-                  NPI Number
-                </span>
-                <input
-                  value={formState.npi}
-                  onChange={(event) => updateField("npi", event.target.value)}
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="1234567890"
-                />
-              </label>
+
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   Select Your Practice Type *
@@ -1213,19 +1196,7 @@ export default function DashboardPage() {
                     />
                     <span className="text-sm text-slate-700">Morrisville</span>
                   </label>
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      name="primary_location"
-                      value="fayetteville"
-                      checked={formState.primary_location === "fayetteville"}
-                      onChange={(event) =>
-                        updateField("primary_location", event.target.value)
-                      }
-                      className="text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="text-sm text-slate-700">Fayetteville</span>
-                  </label>
+
                   <label className="flex items-center gap-2">
                     <input
                       type="radio"
@@ -1293,21 +1264,6 @@ export default function DashboardPage() {
                   }
                   className="min-h-[100px] rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
                   placeholder="Describe your services"
-                />
-              </label>
-
-              <label className="col-span-1 md:col-span-2 flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">
-                  Tell us more about your practice so we can tailor our AI tool
-                  to better support your needs. *
-                </span>
-                <textarea
-                  value={formState.practice_details}
-                  onChange={(event) =>
-                    updateField("practice_details", event.target.value)
-                  }
-                  className="min-h-[100px] rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="Describe your practice details"
                 />
               </label>
 
@@ -1594,37 +1550,6 @@ export default function DashboardPage() {
                   placeholder="e.g., Mon-Fri 9AM-5PM"
                 />
               </label>
-              <label className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">City</span>
-                <input
-                  value={formState.city}
-                  onChange={(event) => updateField("city", event.target.value)}
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="Raleigh"
-                />
-              </label>
-              <label className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">
-                  State
-                </span>
-                <input
-                  value={formState.state}
-                  onChange={(event) => updateField("state", event.target.value)}
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="NC"
-                />
-              </label>
-              <label className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">
-                  ZIP Code
-                </span>
-                <input
-                  value={formState.zip}
-                  onChange={(event) => updateField("zip", event.target.value)}
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="27601"
-                />
-              </label>
 
               {/* Visibility Package Field */}
               <label className="flex flex-col gap-2">
@@ -1667,9 +1592,9 @@ export default function DashboardPage() {
                       className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
                     <span className="text-sm text-slate-700">
-                      Add Call To Action for $28/month per each spot (optional) Gain extra visibility on
-                      rdumentalhealth.com by featuring your practice in
-                      high-traffic areas.
+                      Add Call To Action for $28/month per each spot (optional)
+                      Gain extra visibility on rdumentalhealth.com by featuring
+                      your practice in high-traffic areas.
                     </span>
                   </label>
                   {/* <label className="flex items-center gap-2">
@@ -2132,19 +2057,7 @@ export default function DashboardPage() {
                     />
                     <span className="text-sm text-slate-700">Morrisville</span>
                   </label>
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      name="primary_location"
-                      value="fayetteville"
-                      checked={formState.primary_location === "fayetteville"}
-                      onChange={(event) =>
-                        updateField("primary_location", event.target.value)
-                      }
-                      className="text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="text-sm text-slate-700">Fayetteville</span>
-                  </label>
+
                   <label className="flex items-center gap-2">
                     <input
                       type="radio"
@@ -2212,21 +2125,6 @@ export default function DashboardPage() {
                   }
                   className="min-h-[100px] rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
                   placeholder="Describe your services"
-                />
-              </label>
-
-              <label className="col-span-1 md:col-span-2 flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">
-                  Tell us more about your practice so we can tailor our AI tool
-                  to better support your needs. *
-                </span>
-                <textarea
-                  value={formState.practice_details}
-                  onChange={(event) =>
-                    updateField("practice_details", event.target.value)
-                  }
-                  className="min-h-[100px] rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="Describe your practice details"
                 />
               </label>
 
@@ -2512,37 +2410,6 @@ export default function DashboardPage() {
                   placeholder="e.g., Mon-Fri 9AM-5PM"
                 />
               </label>
-              <label className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">City</span>
-                <input
-                  value={formState.city}
-                  onChange={(event) => updateField("city", event.target.value)}
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="Raleigh"
-                />
-              </label>
-              <label className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">
-                  State
-                </span>
-                <input
-                  value={formState.state}
-                  onChange={(event) => updateField("state", event.target.value)}
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="NC"
-                />
-              </label>
-              <label className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">
-                  ZIP Code
-                </span>
-                <input
-                  value={formState.zip}
-                  onChange={(event) => updateField("zip", event.target.value)}
-                  className="rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="27601"
-                />
-              </label>
 
               {/* Visibility Package Field */}
               <label className="flex flex-col gap-2">
@@ -2585,12 +2452,12 @@ export default function DashboardPage() {
                       className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
                     <span className="text-sm text-slate-700">
-                      $28/month per spot (optional) 
+                      $28/month per spot (optional)
                     </span>
                     <p className="text-xs text-orange-600">
-                      Gain extra visibility on
-                      rdumentalhealth.com by featuring your practice in
-                      high-traffic areas.</p>
+                      Gain extra visibility on rdumentalhealth.com by featuring
+                      your practice in high-traffic areas.
+                    </p>
                   </label>
                   {/* <label className="flex items-center gap-2">
                     <input
@@ -2895,15 +2762,7 @@ export default function DashboardPage() {
                   {formState.services || "Not set"}
                 </div>
               </div>
-              <div className="col-span-1 md:col-span-2 flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">
-                  Tell us more about your practice so we can tailor our AI tool
-                  to better support your needs. *
-                </span>
-                <div className="min-h-[100px] rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
-                  {formState.practice_details || "Not set"}
-                </div>
-              </div>
+
               <div className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   What types of therapy do you offer? (Select all that apply)
@@ -3014,41 +2873,6 @@ export default function DashboardPage() {
                 </span>
                 <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
                   {formState.business_hours || "Not set"}
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">City</span>
-                <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
-                  {formState.city || "Not set"}
-                </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">
-                  State
-                </span>
-                <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
-                  {formState.state || "Not set"}
-                </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">
-                  ZIP Code
-                </span>
-                <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
-                  {formState.zip || "Not set"}
-                </div>
-              </div>
-
-              {/* NPI Display */}
-              <div className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">
-                  Health Care Professional In Charge National Provider
-                  Identifier (NPI) or Practice National Provider Identifier
-                  (NPI)
-                </span>
-                <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
-                  {formState.npi || "Not set"}
                 </div>
               </div>
 
