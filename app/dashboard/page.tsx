@@ -261,6 +261,17 @@ const getMentalHealthConditionDisplay = (value: string[]): string => {
   return value.map((v) => conditionMap[v] || v).join(", ");
 };
 
+const getPracticeTypeDisplay = (value: string[]): string => {
+  if (!value || value.length === 0) return "Not set";
+  const practiceTypeMap: Record<string, string> = {
+    psychiatry_only: "Psychiatry",
+    therapy_only: "Therapy",
+    psychiatry_therapy: "Psychiatry + Therapy",
+    other: "Other",
+  };
+  return value.map((v) => practiceTypeMap[v] || v).join(", ");
+};
+
 export default function DashboardPage() {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
   const { accessToken, role } = useAppSelector((state) => state.auth);
@@ -972,6 +983,19 @@ export default function DashboardPage() {
                   placeholder="e.g., Addictions, medication evaluation,Testing and Evaluation..."
                 />
               </label>
+              <label className="col-span-1 md:col-span-2 flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">
+                  Please list all services your practice offers *
+                </span>
+                <textarea
+                  value={formState.services}
+                  onChange={(event) =>
+                    updateField("services", event.target.value)
+                  }
+                  className="min-h-[100px] rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  placeholder="Describe your services"
+                />
+              </label>
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   Practice address: *
@@ -1071,9 +1095,7 @@ export default function DashboardPage() {
                       }
                       className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
-                    <span className="text-sm text-slate-700">
-                      Psychiatry Only
-                    </span>
+                    <span className="text-sm text-slate-700">Psychiatry</span>
                   </label>
                   <label className="flex items-center gap-2">
                     <input
@@ -1088,7 +1110,7 @@ export default function DashboardPage() {
                       }
                       className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
-                    <span className="text-sm text-slate-700">Therapy Only</span>
+                    <span className="text-sm text-slate-700">Therapy</span>
                   </label>
                   <label className="flex items-center gap-2">
                     <input
@@ -1253,23 +1275,12 @@ export default function DashboardPage() {
                 </select>
               </label>
 
-              <label className="col-span-1 md:col-span-2 flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">
-                  Please list all services your practice offers *
-                </span>
-                <textarea
-                  value={formState.services}
-                  onChange={(event) =>
-                    updateField("services", event.target.value)
-                  }
-                  className="min-h-[100px] rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="Describe your services"
-                />
-              </label>
-
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  What types of therapy do you offer? (Select all that apply)
+                  What types of therapy do you offer?{" "}
+                  <p className="text-xs text-orange-600">
+                    Select all that apply
+                  </p>
                 </span>
                 <div className="space-y-2">
                   {[
@@ -1307,8 +1318,10 @@ export default function DashboardPage() {
 
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  What types of patients does your practice serve? (Select all
-                  that apply) *
+                  What types of patients does your practice serve? *
+                  <p className="text-xs text-orange-600">
+                    Select all that apply
+                  </p>
                 </span>
                 <div className="space-y-2">
                   {[
@@ -1339,8 +1352,10 @@ export default function DashboardPage() {
               </label>
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  Ethnicity (optional) (Select all that apply to the members of
-                  your practice.)
+                  Ethnicity (optional){" "}
+                  <p className="text-xs text-orange-600">
+                    Select all that apply to the members of your practice.
+                  </p>
                 </span>
                 <div className="space-y-2">
                   {[
@@ -1373,7 +1388,10 @@ export default function DashboardPage() {
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   Please select the gender identity or identities that apply to
-                  you or your clinical staff (select all that apply).
+                  you or your clinical staff.{" "}
+                  <p className="text-xs text-orange-600">
+                    select all that apply
+                  </p>
                 </span>
                 <div className="space-y-2">
                   {["male_only", "female_only", "both", "non_binary"].map(
@@ -1433,7 +1451,8 @@ export default function DashboardPage() {
               </label>
               <label className="col-span-1 md:col-span-2 flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  List your self-pay rates for services (without insurance).
+                  List your self-pay rates for services.{" "}
+                  <p className="text-xs text-orange-600">Without insurance</p>
                 </span>
                 <textarea
                   value={formState.self_pay_rate_of_services}
@@ -1446,9 +1465,11 @@ export default function DashboardPage() {
               </label>
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  Are you currently accepting new patients? (We recommend
-                  pausing your subscription when no longer accepting new
-                  patients) *
+                  Are you currently accepting new patients? *
+                  <p className="text-xs text-orange-600">
+                    We recommend pausing your subscription when no longer
+                    accepting new patients
+                  </p>
                 </span>
                 <select
                   value={formState.is_accepting_new_patients.toString()}
@@ -1466,8 +1487,10 @@ export default function DashboardPage() {
               </label>
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  Is your facility ADA accessible? (If this changes, please
-                  update your answer.)*
+                  Is your facility ADA accessible? *
+                  <p className="text-xs text-orange-600">
+                    If this changes, please update your answer.
+                  </p>
                 </span>
                 <select
                   value={formState.is_ada_accessible.toString()}
@@ -1486,7 +1509,10 @@ export default function DashboardPage() {
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   How do you currently see patients? In person, virtual, or
-                  both? (If this changes, please update your answer.) *
+                  both? *
+                  <p className="text-xs text-orange-600">
+                    If this changes, please update your answer.
+                  </p>
                 </span>
                 <select
                   value={formState.see_patient_type}
@@ -1506,7 +1532,10 @@ export default function DashboardPage() {
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   Are you willing to travel to patients who are unable to
-                  commute? (If this changes, please update your answer.) *
+                  commute? *
+                  <p className="text-xs text-orange-600">
+                    If this changes, please update your answer.
+                  </p>
                 </span>
                 <select
                   value={formState.willing_to_travel}
@@ -1525,8 +1554,10 @@ export default function DashboardPage() {
               </label>
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  How long is your current wait time for new patients? (If this
-                  changes, please update your answer.) *
+                  How long is your current wait time for new patients? *
+                  <p className="text-xs text-orange-600">
+                    If this changes, please update your answer.
+                  </p>
                 </span>
                 <input
                   value={formState.wait_time}
@@ -1539,7 +1570,10 @@ export default function DashboardPage() {
               </label>
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  Business Hours (Please highlight any flexible hours you offer)
+                  Business Hours *
+                  <p className="text-xs text-orange-600">
+                    Please highlight any flexible hours you offer
+                  </p>
                 </span>
                 <input
                   value={formState.business_hours}
@@ -1795,8 +1829,10 @@ export default function DashboardPage() {
               </label>
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  Website (it is ok to add direct link to appointment
-                  scheduling) *
+                  Website *
+                  <p className="text-xs text-orange-600">
+                    It is ok to add direct link to appointment scheduling
+                  </p>
                 </span>
                 <input
                   value={formState.website}
@@ -1832,6 +1868,19 @@ export default function DashboardPage() {
                   }
                   className="min-h-[80px] rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
                   placeholder="e.g., Anxiety, Couples Counseling"
+                />
+              </label>
+              <label className="col-span-1 md:col-span-2 flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">
+                  Please list all services your practice offers *
+                </span>
+                <textarea
+                  value={formState.services}
+                  onChange={(event) =>
+                    updateField("services", event.target.value)
+                  }
+                  className="min-h-[100px] rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  placeholder="Describe your services"
                 />
               </label>
               <label className="flex flex-col gap-2">
@@ -1932,9 +1981,7 @@ export default function DashboardPage() {
                       }
                       className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
-                    <span className="text-sm text-slate-700">
-                      Psychiatry Only
-                    </span>
+                    <span className="text-sm text-slate-700">Psychiatry</span>
                   </label>
                   <label className="flex items-center gap-2">
                     <input
@@ -1949,7 +1996,7 @@ export default function DashboardPage() {
                       }
                       className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
-                    <span className="text-sm text-slate-700">Therapy Only</span>
+                    <span className="text-sm text-slate-700">Therapy</span>
                   </label>
                   <label className="flex items-center gap-2">
                     <input
@@ -2114,23 +2161,12 @@ export default function DashboardPage() {
                 </select>
               </label>
 
-              <label className="col-span-1 md:col-span-2 flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">
-                  Please list all services your practice offers *
-                </span>
-                <textarea
-                  value={formState.services}
-                  onChange={(event) =>
-                    updateField("services", event.target.value)
-                  }
-                  className="min-h-[100px] rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  placeholder="Describe your services"
-                />
-              </label>
-
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  What types of therapy do you offer? (Select all that apply)
+                  What types of therapy do you offer?
+                  <p className="text-xs text-orange-600">
+                    Select all that apply
+                  </p>
                 </span>
                 <div className="space-y-2">
                   {[
@@ -2168,8 +2204,10 @@ export default function DashboardPage() {
 
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  What types of patients does your practice serve? (Select all
-                  that apply) *
+                  What types of patients does your practice serve? *
+                  <p className="text-xs text-orange-600">
+                    Select all that apply
+                  </p>
                 </span>
                 <div className="space-y-2">
                   {[
@@ -2200,8 +2238,10 @@ export default function DashboardPage() {
               </label>
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  Ethnicity (optional) (Select all that apply to the members of
-                  your practice.)
+                  Ethnicity (optional){" "}
+                  <p className="text-xs text-orange-600">
+                    Select all that apply to the members of your practice.
+                  </p>
                 </span>
                 <div className="space-y-2">
                   {[
@@ -2234,7 +2274,10 @@ export default function DashboardPage() {
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   Please select the gender identity or identities that apply to
-                  you or your clinical staff (select all that apply).
+                  you or your clinical staff.{" "}
+                  <p className="text-xs text-orange-600">
+                    select all that apply
+                  </p>
                 </span>
                 <div className="space-y-2">
                   {["male_only", "female_only", "both", "non_binary"].map(
@@ -2294,7 +2337,8 @@ export default function DashboardPage() {
               </label>
               <label className="col-span-1 md:col-span-2 flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  List your self-pay rates for services (without insurance).
+                  List your self-pay rates for services.{" "}
+                  <p className="text-xs text-orange-600">Without insurance</p>
                 </span>
                 <textarea
                   value={formState.self_pay_rate_of_services}
@@ -2307,8 +2351,10 @@ export default function DashboardPage() {
               </label>
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  Are you currently accepting new patients? (Please notify us of
-                  any changes.) *
+                  Are you currently accepting new patients? *
+                  <p className="text-xs text-orange-600">
+                    Please notify us if this changes.
+                  </p>
                 </span>
                 <select
                   value={formState.is_accepting_new_patients.toString()}
@@ -2346,7 +2392,10 @@ export default function DashboardPage() {
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   How do you currently see patients? In person, virtual, or
-                  both? (Please notify us if this changes.) *
+                  both? *
+                  <p className="text-xs text-orange-600">
+                    Please notify us if this changes.
+                  </p>
                 </span>
                 <select
                   value={formState.see_patient_type}
@@ -2385,8 +2434,10 @@ export default function DashboardPage() {
               </label>
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  How long is your current wait time for new patients? (Let us
-                  know if this changes.) *
+                  How long is your current wait time for new patients? *
+                  <p className="text-xs text-orange-600">
+                    Let us know if this changes.
+                  </p>
                 </span>
                 <input
                   value={formState.wait_time}
@@ -2399,7 +2450,10 @@ export default function DashboardPage() {
               </label>
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  Business Hours (Please highlight any flexible hours you offer)
+                  Business Hours *
+                  <p className="text-xs text-orange-600">
+                    Please highlight any flexible hours you offer
+                  </p>
                 </span>
                 <input
                   value={formState.business_hours}
@@ -2677,6 +2731,14 @@ export default function DashboardPage() {
                   {formState.specialty || "Not set"}
                 </div>
               </div>
+              <div className="col-span-1 md:col-span-2 flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-700">
+                  Please list all services your practice offers *
+                </span>
+                <div className="min-h-[100px] rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
+                  {formState.services || "Not set"}
+                </div>
+              </div>
               <div className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   Practice address: *
@@ -2722,7 +2784,7 @@ export default function DashboardPage() {
                   Practice Type
                 </span>
                 <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
-                  {formatArrayField(formState.practice_type) || "Not set"}
+                  {getPracticeTypeDisplay(formState.practice_type)}
                 </div>
               </div>
               <div className="flex flex-col gap-2">
@@ -2754,18 +2816,9 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              <div className="col-span-1 md:col-span-2 flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-700">
-                  Please list all services your practice offers *
-                </span>
-                <div className="min-h-[100px] rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
-                  {formState.services || "Not set"}
-                </div>
-              </div>
-
               <div className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  What types of therapy do you offer? (Select all that apply)
+                  What types of therapy do you offer?
                 </span>
                 <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
                   {formatArrayField(formState.types_of_therapy) || "Not set"}
@@ -2773,8 +2826,7 @@ export default function DashboardPage() {
               </div>
               <div className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  What types of patients does your practice serve? (Select all
-                  that apply) *
+                  What types of patients does your practice serve? *
                 </span>
                 <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
                   {formatArrayField(formState.patient_types) || "Not set"}
@@ -2792,7 +2844,7 @@ export default function DashboardPage() {
               <div className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   Please select the gender identity or identities that apply to
-                  you or your clinical staff (select all that apply).
+                  you or your clinical staff.
                 </span>
                 <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
                   {getGenderIdentityDisplay(formState.gender_identity)}
@@ -2816,7 +2868,7 @@ export default function DashboardPage() {
               </div>
               <div className="col-span-1 md:col-span-2 flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  List your self-pay rates for services (without insurance).
+                  List your self-pay rates for services. (Without insurance)
                 </span>
                 <div className="min-h-[80px] rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
                   {formState.self_pay_rate_of_services || "Not set"}
@@ -2843,7 +2895,7 @@ export default function DashboardPage() {
               <div className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   How do you currently see patients? In person, virtual, or
-                  both? (Please notify us if this changes.) *
+                  both?* ( Please notify us if this changes. )
                 </span>
                 <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
                   {getSeePatientTypeDisplay(formState.see_patient_type)}
