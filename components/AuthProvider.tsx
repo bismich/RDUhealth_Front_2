@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { createSupabaseClient } from "@/lib/supabase";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setSession, clearSession } from "@/store/authSlice";
+import { mutate } from "swr";
 import type { Session } from "@supabase/supabase-js";
 
 interface AuthContextType {
@@ -66,6 +67,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           console.error("Error getting session:", error);
           dispatch(clearSession());
           setSessionState(null);
+          // Clear SWR cache on error
+          mutate(() => true, undefined, { revalidate: false });
         } else if (session) {
           setSessionState(session);
           const role = await fetchUserProfile(session.access_token);
@@ -85,6 +88,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.error("Error initializing auth:", error);
         dispatch(clearSession());
         setSessionState(null);
+        // Clear SWR cache on error
+        mutate(() => true, undefined, { revalidate: false });
       } finally {
         setIsLoading(false);
       }
@@ -112,6 +117,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         setSessionState(null);
         dispatch(clearSession());
+        // Clear all SWR cache when user logs out
+        mutate(() => true, undefined, { revalidate: false });
       }
 
       setIsLoading(false);

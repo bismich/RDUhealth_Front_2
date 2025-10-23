@@ -7,9 +7,9 @@ import { useCallback, useMemo, useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-import { createSupabaseClient } from "@/lib/supabase";
 import { useAuth } from "@/components/AuthProvider";
 import { useAppSelector } from "@/store/hooks";
+import { useLogout } from "@/lib/auth-utils";
 
 type NavLink = {
   href: string;
@@ -195,12 +195,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     return links;
   }, []);
 
-  const handleSignOut = useCallback(async () => {
-    const supabase = createSupabaseClient();
-    await supabase.auth.signOut();
-    // AuthProvider will automatically handle clearing the session
-    router.replace("/login");
-  }, [router]);
+  const logout = useLogout();
 
   return (
     <ProtectedRoute>
@@ -236,7 +231,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               )}
               <button
                 type="button"
-                onClick={handleSignOut}
+                onClick={logout}
                 className="rounded-full border border-slate-200 bg-white px-4 py-1.5 text-sm font-medium text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
               >
                 Sign out
