@@ -30,7 +30,12 @@ export default function BillingPage() {
   const [message, setMessage] = useState<string | null>(null);
   const [isCheckoutLoading, setIsCheckoutLoading] = useState<boolean>(false);
   const [isPortalLoading, setIsPortalLoading] = useState<boolean>(false);
+  const [showTrialPopup, setShowTrialPopup] = useState<boolean>(false);
   const canQuery = Boolean(baseUrl && accessToken);
+
+  // Billing enforcement date: January 1, 2026
+  const billingEnforcementDate = new Date("2026-01-01T00:00:00Z");
+  const isBeforeEnforcementDate = new Date() < billingEnforcementDate;
 
   const fetcher = useCallback(
     async (url: string) => {
@@ -102,9 +107,22 @@ export default function BillingPage() {
     return !isFixedPlanActive;
   }, [isFixedPlanActive]);
 
+  const hasActiveSubscription = useMemo(() => {
+    return (
+      subscription?.status === "active" || subscription?.status === "trialing"
+    );
+  }, [subscription]);
+
   const handleCheckout = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
+
+      // Check if we're before the enforcement date
+      if (isBeforeEnforcementDate) {
+        setShowTrialPopup(true);
+        return;
+      }
+
       if (
         !canQuery ||
         isCheckoutLoading ||
@@ -156,6 +174,7 @@ export default function BillingPage() {
       ctaSpots,
       isCheckoutLoading,
       canSelectFixedPlan,
+      isBeforeEnforcementDate,
     ]
   );
 
@@ -201,7 +220,7 @@ export default function BillingPage() {
             </h1>
             <p className="text-slate-600">
               Choose the right plan for your practice. Billing enforcement
-              starts on {subscription?.billingEnforcementDate}.
+              starts on January 1, 2026.
             </p>
           </div>
           <Link
@@ -334,16 +353,17 @@ export default function BillingPage() {
         </div>
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 text-sm text-slate-600">
           <span>
-            Free usage is available until {subscription?.billingEnforcementDate}
-            . We automatically honour a {subscription?.trialDays}-day trial once
-            billing begins.
+            {isBeforeEnforcementDate
+              ? "Free trial is active until December 31, 2025. Subscriptions will be available starting January 1, 2026."
+              : `Free usage is available until ${subscription?.billingEnforcementDate}. We automatically honour a ${subscription?.trialDays}-day trial once billing begins.`}
           </span>
           <button
             type="submit"
             disabled={
               isCheckoutLoading ||
               !canQuery ||
-              (selectedPlan === "fixed" && !canSelectFixedPlan)
+              (selectedPlan === "fixed" && !canSelectFixedPlan) ||
+              isBeforeEnforcementDate
             }
             className="rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-blue-300"
           >
@@ -352,6 +372,8 @@ export default function BillingPage() {
                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
                 <span>Processing...</span>
               </div>
+            ) : isBeforeEnforcementDate ? (
+              "Available Jan 1, 2026"
             ) : selectedPlan === "fixed" && !canSelectFixedPlan ? (
               "Already Active"
             ) : (
@@ -361,30 +383,59 @@ export default function BillingPage() {
         </div>
       </form>
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="text-2xl font-semibold text-slate-900">
-          Manage billing
-        </h2>
-        <p className="mt-2 text-sm text-slate-600">
-          Update payment details, download invoices, or cancel your subscription
-          anytime from the Stripe billing portal.
-        </p>
-        <button
-          type="button"
-          onClick={handlePortal}
-          disabled={isPortalLoading || !canQuery}
-          className="mt-4 inline-flex items-center justify-center rounded-full border border-slate-900 px-5 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-900 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {isPortalLoading ? (
-            <div className="flex items-center gap-2">
-              <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-900 border-t-transparent"></div>
-              <span>Opening...</span>
+      {/* Only show manage billing section after enforcement date and if user has active subscription */}
+      {!isBeforeEnforcementDate && hasActiveSubscription && (
+        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 className="text-2xl font-semibold text-slate-900">
+            Manage billing
+          </h2>
+          <p className="mt-2 text-sm text-slate-600">
+            Update payment details, download invoices, or cancel your
+            subscription anytime from the Stripe billing portal.
+          </p>
+          <button
+            type="button"
+            onClick={handlePortal}
+            disabled={isPortalLoading || !canQuery}
+            className="mt-4 inline-flex items-center justify-center rounded-full border border-slate-900 px-5 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-900 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {isPortalLoading ? (
+              <div className="flex items-center gap-2">
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-900 border-t-transparent"></div>
+                <span>Opening...</span>
+              </div>
+            ) : (
+              "Open billing portal"
+            )}
+          </button>
+        </section>
+      )}
+
+      {/* Trial Popup Modal */}
+      {showTrialPopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="mx-4 max-w-md rounded-2xl bg-white p-6 shadow-xl">
+            <div className="mb-4">
+              <h3 className="text-xl font-semibold text-slate-900">
+                Free Trial Active
+              </h3>
+              <p className="mt-2 text-sm text-slate-600">
+                Billing free trial is active until December 31, 2025. You can
+                purchase a subscription starting January 1, 2026.
+              </p>
             </div>
-          ) : (
-            "Open billing portal"
-          )}
-        </button>
-      </section>
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => setShowTrialPopup(false)}
+                className="rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-500"
+              >
+                Got it
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
