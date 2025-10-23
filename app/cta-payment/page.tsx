@@ -45,7 +45,7 @@ export default function CTAPaymentPage() {
       setMessage(null);
 
       try {
-        const response = await fetch(`${baseUrl}/api/v1/billing/cta-payment`, {
+        const response = await fetch(`${baseUrl}/api/v1/billing/cta-payment/`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

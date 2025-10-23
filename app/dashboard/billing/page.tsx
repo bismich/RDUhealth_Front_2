@@ -50,7 +50,7 @@ export default function BillingPage() {
     error,
     isLoading,
   } = useSWR(
-    canQuery ? `${baseUrl}/api/v1/billing/subscription` : null,
+    canQuery ? `${baseUrl}/api/v1/billing/subscription/` : null,
     fetcher,
     {
       onSuccess(data) {
@@ -122,7 +122,7 @@ export default function BillingPage() {
           : { plan: selectedPlan };
 
       try {
-        const response = await fetch(`${baseUrl}/api/v1/billing/checkout`, {
+        const response = await fetch(`${baseUrl}/api/v1/billing/checkout/`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -167,7 +167,7 @@ export default function BillingPage() {
     setIsPortalLoading(true);
 
     try {
-      const response = await fetch(`${baseUrl}/api/v1/billing/portal`, {
+      const response = await fetch(`${baseUrl}/api/v1/billing/portal/`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${accessToken}`,
