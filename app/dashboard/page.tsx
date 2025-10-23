@@ -2956,7 +2956,7 @@ export default function DashboardPage() {
               </div>
 
               {/* CTA Message Display */}
-              <div className="flex flex-col gap-2">
+              {/* <div className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   If you selected a CTA spot, what message would you like to use
                   as your call to action?
@@ -2964,7 +2964,7 @@ export default function DashboardPage() {
                 <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900">
                   {formState.cta_message || "Not set"}
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </section>
