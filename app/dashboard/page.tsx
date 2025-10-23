@@ -1738,7 +1738,7 @@ export default function DashboardPage() {
               </label>
 
               {/* CTA Message Field */}
-              <label className="flex flex-col gap-2">
+              {/* <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   If you selected a CTA spot, what message would you like to use
                   as your call to action?
@@ -1752,7 +1752,7 @@ export default function DashboardPage() {
                   placeholder="e.g., Take the first step towards better mental health today."
                   rows={3}
                 />
-              </label>
+              </label> */}
             </div>
           </div>
         </section>
@@ -2620,7 +2620,7 @@ export default function DashboardPage() {
               </label>
 
               {/* CTA Message Field */}
-              <label className="flex flex-col gap-2">
+              {/* <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   If you selected a CTA spot, what message would you like to use
                   as your call to action?
@@ -2634,7 +2634,7 @@ export default function DashboardPage() {
                   placeholder="e.g., Take the first step towards better mental health today."
                   rows={3}
                 />
-              </label>
+              </label> */}
             </div>
 
             <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-100 bg-slate-50/80 px-4 py-4 shadow-inner">
