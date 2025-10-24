@@ -266,7 +266,7 @@ const getPracticeTypeDisplay = (value: string[]): string => {
   const practiceTypeMap: Record<string, string> = {
     psychiatry_only: "Psychiatry",
     therapy_only: "Therapy",
-    psychiatry_therapy: "Psychiatry + Therapy",
+    psychiatry_therapy: "Mental Health Counseling",
     other: "Other",
   };
   return value.map((v) => practiceTypeMap[v] || v).join(", ");
