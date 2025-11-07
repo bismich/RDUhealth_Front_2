@@ -108,6 +108,37 @@ export default function UsersPage() {
     }
   };
 
+  const handleDeleteUser = async (userId: number, userEmail: string) => {
+    // Show confirmation dialog
+    const confirmed = window.confirm(
+      `Are you sure you want to delete user "${userEmail}"? This action cannot be undone and will delete all associated data (practices, subscriptions, chat sessions, etc.).`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`${baseUrl}/api/v1/admin/users/${userId}/`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (response.ok) {
+        mutate(); // Refresh the user list
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.error || "Failed to delete user";
+        alert(errorMessage);
+      }
+    } catch (error) {
+      console.error("Failed to delete user:", error);
+      alert("An error occurred while deleting the user. Please try again.");
+    }
+  };
+
   if (role !== "admin") {
     return (
       <div className="space-y-6">
@@ -300,18 +331,26 @@ export default function UsersPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        <button
-                          onClick={() =>
-                            toggleUserStatus(user.id, user.is_active)
-                          }
-                          className={`text-sm font-medium ${
-                            user.is_active
-                              ? "text-red-600 hover:text-red-700"
-                              : "text-green-600 hover:text-green-700"
-                          }`}
-                        >
-                          {user.is_active ? "Deactivate" : "Activate"}
-                        </button>
+                        <div className="flex items-center gap-3">
+                          <button
+                            onClick={() =>
+                              toggleUserStatus(user.id, user.is_active)
+                            }
+                            className={`text-sm font-medium ${
+                              user.is_active
+                                ? "text-red-600 hover:text-red-700"
+                                : "text-green-600 hover:text-green-700"
+                            }`}
+                          >
+                            {user.is_active ? "Deactivate" : "Activate"}
+                          </button>
+                          <button
+                            onClick={() => handleDeleteUser(user.id, user.email)}
+                            className="text-sm font-medium text-red-600 hover:text-red-700"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
