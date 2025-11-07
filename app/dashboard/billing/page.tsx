@@ -33,8 +33,8 @@ export default function BillingPage() {
   const [showTrialPopup, setShowTrialPopup] = useState<boolean>(false);
   const canQuery = Boolean(baseUrl && accessToken);
 
-  // Billing enforcement date: January 1, 2026
-  const billingEnforcementDate = new Date("2026-01-01T00:00:00Z");
+  // Billing enforcement date: April 1, 2026
+  const billingEnforcementDate = new Date("2026-04-01T00:00:00Z");
   const isBeforeEnforcementDate = new Date() < billingEnforcementDate;
 
   const fetcher = useCallback(
@@ -220,7 +220,7 @@ export default function BillingPage() {
             </h1>
             <p className="text-slate-600">
               Choose the right plan for your practice. Billing enforcement
-              starts on January 1, 2026.
+              starts on April 1, 2026.
             </p>
           </div>
           <Link
@@ -354,7 +354,7 @@ export default function BillingPage() {
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 text-sm text-slate-600">
           <span>
             {isBeforeEnforcementDate
-              ? "Free trial is active until December 31, 2025. Subscriptions will be available starting January 1, 2026."
+              ? "Free trial is active until March 31, 2026. Subscriptions will be available starting April 1, 2026."
               : `Free usage is available until ${subscription?.billingEnforcementDate}. We automatically honour a ${subscription?.trialDays}-day trial once billing begins.`}
           </span>
           <button
@@ -373,7 +373,7 @@ export default function BillingPage() {
                 <span>Processing...</span>
               </div>
             ) : isBeforeEnforcementDate ? (
-              "Available Jan 1, 2026"
+              "Available Apr 1, 2026"
             ) : selectedPlan === "fixed" && !canSelectFixedPlan ? (
               "Already Active"
             ) : (
@@ -420,8 +420,8 @@ export default function BillingPage() {
                 Free Trial Active
               </h3>
               <p className="mt-2 text-sm text-slate-600">
-                Billing free trial is active until December 31, 2025. You can
-                purchase a subscription starting January 1, 2026.
+                Billing free trial is active until March 31, 2026. You can
+                purchase a subscription starting April 1, 2026.
               </p>
             </div>
             <div className="flex justify-end">

@@ -83,7 +83,7 @@ export default function LoginPage() {
                   Important notification:
                 </p>
                 <p className="mt-2 text-sm text-slate-500">
-                  Our free trial is active through December 31, 2025. After that, you'll receive an additional 14-day grace period before billing begins.
+                  Our free trial is active through March 31, 2026. After that, you'll receive an additional 14-day grace period before billing begins.
                 </p>
               </div>
             </div>
