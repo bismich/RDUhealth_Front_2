@@ -439,7 +439,7 @@ export default function PublicChatPage() {
               <textarea
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
-                placeholder="Type your message here..."
+                placeholder="In a few words, please describe your unique situation."
                 className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-base text-slate-800 shadow-inner focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100 resize-none"
                 rows={1}
                 style={{ minHeight: "48px", maxHeight: "120px" }}
