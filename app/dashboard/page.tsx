@@ -845,9 +845,9 @@ export default function DashboardPage() {
             </h2>
             <div className="mt-4 space-y-3 text-sm text-slate-600">
               <p>
-                Share your referral link with patients, family, friends,
-                colleagues—and especially on social media. The more providers
-                who share the tool, the greater the visibility for everyone on
+                Share this link with patients, family, friends,
+                colleagues, and especially on social media. The more providers
+                share the tool, the greater the visibility for everyone on
                 the platform.
               </p>
               <div className="flex items-center gap-2 md:flex-row flex-col">
