@@ -1629,7 +1629,7 @@ export default function DashboardPage() {
                       className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
                     <span className="text-sm text-slate-700">
-                      Add a "Call To Action" -  Gain extra visibility on rdumentalhealth.com by featuring
+                      Add a "Call To Action" - Gain extra visibility on rdumentalhealth.com by featuring
                       your practice in high-traffic areas.
                   <p className="text-xs text-orange-600">
                     - Select one spot only (Free until March 31st 2026) $28/month per each spot
