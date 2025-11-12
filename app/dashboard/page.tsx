@@ -1607,7 +1607,10 @@ export default function DashboardPage() {
                       className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
                     <span className="text-sm text-slate-700">
-                      AI Search Tool only ($25/month) - Required to use this app
+                      AI Search Tool only ($25/month) 
+                      <p className="text-xs text-orange-600">
+                    - Do not select(Free until March 31st 2026)
+                  </p>
                     </span>
                   </label>
                   <label className="flex items-center gap-2">
@@ -1626,9 +1629,11 @@ export default function DashboardPage() {
                       className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
                     <span className="text-sm text-slate-700">
-                      Add Call To Action for $28/month per each spot (optional)
-                      Gain extra visibility on rdumentalhealth.com by featuring
+                      Add a "Call To Action" -  Gain extra visibility on rdumentalhealth.com by featuring
                       your practice in high-traffic areas.
+                  <p className="text-xs text-orange-600">
+                    - Select one spot only (Free until March 31st 2026) $28/month per each spot
+                  </p>
                     </span>
                   </label>
                   {/* <label className="flex items-center gap-2">
