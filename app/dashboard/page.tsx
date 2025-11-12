@@ -2492,7 +2492,7 @@ export default function DashboardPage() {
                       className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
                     <span className="text-sm text-slate-700">
-                      AI Search Tool only ($20/month) - Required to use this app
+                      AI Search Tool only ($20/month) -  Do not check (Free until March 31st 2026)
                     </span>
                   </label>
                   <label className="flex items-center gap-2">
