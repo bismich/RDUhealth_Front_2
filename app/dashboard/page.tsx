@@ -972,13 +972,14 @@ export default function DashboardPage() {
               </label>
               <label className="col-span-1 md:col-span-2 flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  Specialty
+                  Specialty ({formState.specialty.length}/1000)
                 </span>
                 <textarea
                   value={formState.specialty}
                   onChange={(event) =>
                     updateField("specialty", event.target.value)
                   }
+                  maxLength={1000}
                   className="min-h-[80px] rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
                   placeholder="e.g., Addictions, medication evaluation,Testing and Evaluation..."
                 />
@@ -1864,13 +1865,14 @@ export default function DashboardPage() {
               </label>
               <label className="col-span-1 md:col-span-2 flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  Specialty
+                  Specialty ({formState.specialty.length}/1000)
                 </span>
                 <textarea
                   value={formState.specialty}
                   onChange={(event) =>
                     updateField("specialty", event.target.value)
                   }
+                  maxLength={1000}
                   className="min-h-[80px] rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
                   placeholder="e.g., Anxiety, Couples Counseling"
                 />
