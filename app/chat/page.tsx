@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -46,6 +46,7 @@ export default function PublicChatPage() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const storageKey = "rdu-chat-session:global";
 
@@ -65,6 +66,13 @@ export default function PublicChatPage() {
     }
     window.localStorage.setItem(storageKey, sessionId);
   }, [sessionId, storageKey]);
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      const minHeight = typeof window !== "undefined" && window.innerWidth < 640 ? 64 : 48;
+      textareaRef.current.style.height = minHeight + "px";
+    }
+  }, []);
 
   const sendMessage = async (text: string) => {
     if (!text.trim()) {
@@ -194,40 +202,40 @@ export default function PublicChatPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-[#f7f8ff] via-white to-[#edf2ff] px-4 py-10 text-slate-900">
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-8">
-        <header className="flex flex-wrap items-center justify-between gap-4">
+    <main className="min-h-screen bg-gradient-to-br from-[#f7f8ff] via-white to-[#edf2ff] px-2 sm:px-4 py-6 sm:py-10 text-slate-900">
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 sm:gap-8">
+        <header className="flex flex-wrap items-center justify-between gap-3 sm:gap-4">
           <div className="flex flex-col gap-1">
-            <span className="text-sm font-medium uppercase tracking-[0.2em] text-slate-500">
+            <span className="text-xs sm:text-sm font-medium uppercase tracking-[0.2em] text-slate-500">
               RDU Mental Health
             </span>
-            <h1 className="text-3xl font-semibold text-slate-900">
+            <h1 className="text-2xl sm:text-3xl font-semibold text-slate-900">
               Discover Mental Health Providers
             </h1>
-            <p className="text-sm text-slate-500">
+            <p className="text-base sm:text-sm text-slate-500">
               Global search · Raleigh · Durham · Chapel Hill
             </p>
           </div>
-          <div className="inline-flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 text-sm font-semibold text-blue-600 shadow">
+          <div className="inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold text-blue-600 shadow">
             <span className="h-2 w-2 rounded-full bg-blue-500" /> AI Powered
           </div>
         </header>
 
         {!apiBase && (
-          <p className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 shadow">
+          <p className="rounded-2xl border border-amber-200 bg-amber-50 px-3 py-2.5 sm:px-4 sm:py-3 text-base sm:text-sm text-amber-700 shadow">
             Configure <code>NEXT_PUBLIC_API_BASE_URL</code> to connect this page
             to the live API.
           </p>
         )}
 
         {messages.length === 0 && (
-          <section className="rounded-[32px] bg-white/80 p-8 shadow-xl backdrop-blur">
-            <div className="flex flex-col gap-6">
+          <section className="rounded-[32px] bg-white/80 p-4 sm:p-8 shadow-xl backdrop-blur">
+            <div className="flex flex-col gap-4 sm:gap-6">
               <div>
-                <h2 className="text-2xl font-semibold">
+                <h2 className="text-xl sm:text-2xl font-semibold">
                   Looking for mental health services?
                 </h2>
-                <p className="text-sm text-slate-600">
+                <p className="text-base sm:text-sm text-slate-600">
                   I&apos;ll help you find the right mental health provider for
                   your unique needs (see examples below)
                 </p>
@@ -238,7 +246,7 @@ export default function PublicChatPage() {
                     key={suggestion}
                     type="button"
                     onClick={() => handleSuggestion(suggestion)}
-                    className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-left text-sm text-slate-700 transition hover:-translate-y-1 hover:border-blue-300 hover:shadow-lg"
+                    className="rounded-2xl border border-slate-200 bg-white px-3 py-2.5 sm:px-4 sm:py-3 text-left text-base sm:text-sm text-slate-700 transition hover:-translate-y-1 hover:border-blue-300 hover:shadow-lg"
                   >
                     {suggestion}
                   </button>
@@ -248,10 +256,10 @@ export default function PublicChatPage() {
           </section>
         )}
 
-        <section className="flex flex-col gap-6 rounded-[32px] border border-white/60 bg-white/90 p-8 shadow-xl backdrop-blur">
-          <div className="flex max-h-[380px] flex-col gap-4 overflow-y-auto pr-2">
+        <section className="flex flex-col gap-4 sm:gap-6 rounded-[32px] border border-white/60 bg-white/90 p-3 sm:p-8 shadow-xl backdrop-blur">
+          <div className="flex max-h-[500px] sm:max-h-[380px] flex-col gap-3 sm:gap-4 overflow-y-auto pr-1 sm:pr-2">
             {messages.length === 0 && !loading && (
-              <div className="rounded-2xl bg-slate-50 p-6 text-sm text-slate-500">
+              <div className="rounded-2xl bg-slate-50 p-4 sm:p-6 text-base sm:text-sm text-slate-500">
                 Ask about services, insurance, or availability anywhere in the
                 Triangle and we&apos;ll suggest matching practices.
               </div>
@@ -259,7 +267,7 @@ export default function PublicChatPage() {
             {messages.map((message, index) => (
               <div
                 key={`${message.role}-${index}`}
-                className={`max-w-[80%] rounded-2xl px-5 py-3 text-sm leading-relaxed shadow-sm ${
+                className={`max-w-[90%] sm:max-w-[80%] rounded-2xl px-3 py-2.5 sm:px-5 sm:py-3 text-base sm:text-sm leading-relaxed shadow-sm ${
                   message.role === "user"
                     ? "self-end bg-blue-600 text-white"
                     : "self-start bg-white text-slate-800"
@@ -280,36 +288,36 @@ export default function PublicChatPage() {
                               handleMarkdownLinkClick(href);
                             }
                           }}
-                          className="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                          className="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer text-base sm:text-sm"
                         >
                           {children}
                         </a>
                       ),
                       h1: ({ children }) => (
-                        <h1 className="text-lg font-semibold mb-2 text-slate-900">
+                        <h1 className="text-xl sm:text-lg font-semibold mb-2 text-slate-900">
                           {children}
                         </h1>
                       ),
                       h2: ({ children }) => (
-                        <h2 className="text-base font-semibold mb-2 text-slate-900">
+                        <h2 className="text-lg sm:text-base font-semibold mb-2 text-slate-900">
                           {children}
                         </h2>
                       ),
                       h3: ({ children }) => (
-                        <h3 className="text-sm font-semibold mb-1 text-slate-900">
+                        <h3 className="text-base sm:text-sm font-semibold mb-1 text-slate-900">
                           {children}
                         </h3>
                       ),
                       p: ({ children }) => (
-                        <p className="mb-2 last:mb-0">{children}</p>
+                        <p className="mb-2 last:mb-0 text-base sm:text-sm">{children}</p>
                       ),
                       ul: ({ children }) => (
-                        <ul className="list-disc list-inside mb-2 space-y-1">
+                        <ul className="list-disc list-inside mb-2 space-y-1 text-base sm:text-sm">
                           {children}
                         </ul>
                       ),
                       ol: ({ children }) => (
-                        <ol className="list-decimal list-inside mb-2 space-y-1">
+                        <ol className="list-decimal list-inside mb-2 space-y-1 text-base sm:text-sm">
                           {children}
                         </ol>
                       ),
@@ -332,7 +340,7 @@ export default function PublicChatPage() {
               </div>
             ))}
             {loading && (
-              <div className="flex items-center gap-3 self-start rounded-2xl bg-white px-5 py-3 text-sm text-slate-500 shadow-sm">
+              <div className="flex items-center gap-3 self-start rounded-2xl bg-white px-3 py-2.5 sm:px-5 sm:py-3 text-base sm:text-sm text-slate-500 shadow-sm">
                 <span className="h-2 w-2 animate-pulse rounded-full bg-blue-500" />{" "}
                 Thinking…
               </div>
@@ -340,34 +348,34 @@ export default function PublicChatPage() {
           </div>
 
           {error && (
-            <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-600">
+            <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 sm:px-4 text-base sm:text-sm text-red-600">
               {error}
             </p>
           )}
 
           {sources.length > 0 && (
-            <div className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-6 shadow-inner">
+            <div className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:p-6 shadow-inner">
               <div>
-                <h3 className="text-lg font-semibold text-slate-900">
+                <h3 className="text-xl sm:text-lg font-semibold text-slate-900">
                   Matching Healthcare Practices
                 </h3>
-                <p className="text-sm text-slate-600">
+                <p className="text-base sm:text-sm text-slate-600">
                   Tap a practice to learn more, visit their site, or schedule an
                   appointment.
                 </p>
               </div>
-              <ol className="space-y-4">
+              <ol className="space-y-3 sm:space-y-4">
                 {sources.map((source, index) => (
                   <li
                     key={source.practice_id}
-                    className="rounded-2xl bg-white p-4 shadow"
+                    className="rounded-2xl bg-white p-3 sm:p-4 shadow"
                   >
-                    <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start justify-between gap-2 sm:gap-3">
                       <div className="flex-1">
-                        <p className="text-sm font-semibold text-slate-900">
+                        <p className="text-base sm:text-sm font-semibold text-slate-900">
                           {index + 1}. {source.practice_name}
                         </p>
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs sm:text-xs text-slate-500">
                           Match: {Math.round(source.similarity_score * 100)}%
                         </p>
 
@@ -376,7 +384,7 @@ export default function PublicChatPage() {
                           source.city ||
                           source.state ||
                           source.zip) && (
-                          <div className="mt-2 text-xs text-slate-600">
+                          <div className="mt-2 text-xs sm:text-xs text-slate-600">
                             <p className="font-medium text-slate-700">
                               Location:
                             </p>
@@ -393,7 +401,7 @@ export default function PublicChatPage() {
 
                         {/* Primary Location */}
                         {source.primary_location && (
-                          <div className="mt-1 text-xs text-slate-600">
+                          <div className="mt-1 text-xs sm:text-xs text-slate-600">
                             <span className="font-medium text-slate-700">
                               Primary Area:
                             </span>{" "}
@@ -403,7 +411,7 @@ export default function PublicChatPage() {
 
                         {/* Other Locations */}
                         {source.other_location && (
-                          <div className="mt-1 text-xs text-slate-600">
+                          <div className="mt-1 text-xs sm:text-xs text-slate-600">
                             <span className="font-medium text-slate-700">
                               Other Locations:
                             </span>{" "}
@@ -416,7 +424,7 @@ export default function PublicChatPage() {
                         <button
                           type="button"
                           onClick={() => handleSourceClick(source)}
-                          className="text-xs font-semibold text-blue-600 hover:underline whitespace-nowrap"
+                          className="text-xs sm:text-xs font-semibold text-blue-600 hover:underline whitespace-nowrap"
                         >
                           Visit site
                         </button>
@@ -424,7 +432,7 @@ export default function PublicChatPage() {
                     </div>
 
                     {source.website && (
-                      <div className="mt-3 flex flex-wrap gap-3 text-xs text-slate-500">
+                      <div className="mt-2 sm:mt-3 flex flex-wrap gap-2 sm:gap-3 text-xs sm:text-xs text-slate-500">
                         <span>{getHostname(source.website)}</span>
                       </div>
                     )}
@@ -434,27 +442,29 @@ export default function PublicChatPage() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="flex gap-3">
+          <form onSubmit={handleSubmit} className="flex gap-2 sm:gap-3">
             <div className="flex-1">
               <textarea
+                ref={textareaRef}
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
                 placeholder="In a few words, please describe your unique situation."
-                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-base text-slate-800 shadow-inner focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100 resize-none"
+                className="w-full rounded-2xl border border-slate-200 bg-white px-3 py-2.5 sm:px-4 sm:py-3 text-lg sm:text-base text-slate-800 shadow-inner focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100 resize-none min-h-[64px] sm:min-h-[48px]"
                 rows={1}
-                style={{ minHeight: "48px", maxHeight: "120px" }}
+                style={{ maxHeight: "120px" }}
                 onInput={(e) => {
                   const target = e.target as HTMLTextAreaElement;
+                  const minHeight = typeof window !== "undefined" && window.innerWidth < 640 ? 64 : 48;
                   target.style.height = "auto";
                   target.style.height =
-                    Math.min(target.scrollHeight, 120) + "px";
+                    Math.max(minHeight, Math.min(target.scrollHeight, 120)) + "px";
                 }}
               />
             </div>
             <button
               type="submit"
               disabled={loading || !input.trim()}
-              className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-blue-300"
+              className="flex h-12 w-12 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-blue-600 text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-blue-300 flex-shrink-0"
             >
               {loading ? (
                 <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
