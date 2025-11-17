@@ -845,10 +845,9 @@ export default function DashboardPage() {
             </h2>
             <div className="mt-4 space-y-3 text-sm text-slate-600">
               <p>
-                Share this link with patients, family, friends,
-                colleagues, and especially on social media. The more providers
-                share the tool, the greater the visibility for everyone on
-                the platform.
+                Share this link with patients, family, friends, colleagues, and
+                especially on social media. The more providers share the tool,
+                the greater the visibility for everyone on the platform.
               </p>
               <div className="flex items-center gap-2 md:flex-row flex-col">
                 <code className="flex-1 truncate rounded-2xl border border-slate-200 bg-slate-900/90 px-4 py-3 font-mono text-xs text-slate-100 shadow-inner">
@@ -1571,7 +1570,7 @@ export default function DashboardPage() {
               </label>
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  Business Hours *
+                  Business Hours
                   <p className="text-xs text-orange-600">
                     Please highlight any flexible hours you offer
                   </p>
@@ -1608,10 +1607,10 @@ export default function DashboardPage() {
                       className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
                     <span className="text-sm text-slate-700">
-                      AI Search Tool only ($25/month) 
+                      AI Search Tool only ($25/month)
                       <p className="text-xs text-orange-600">
-                    - Do not select(Free until March 31st 2026)
-                  </p>
+                        - Do not select(Free until March 31st 2026)
+                      </p>
                     </span>
                   </label>
                   <label className="flex items-center gap-2">
@@ -1630,11 +1629,13 @@ export default function DashboardPage() {
                       className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
                     <span className="text-sm text-slate-700">
-                      Add a "Call To Action" - Gain extra visibility on rdumentalhealth.com by featuring
-                      your practice in high-traffic areas.
-                  <p className="text-xs text-orange-600">
-                    - Select one spot only (Free until March 31st 2026) $28/month per each spot
-                  </p>
+                      Add a "Call To Action" - Gain extra visibility on
+                      rdumentalhealth.com by featuring your practice in
+                      high-traffic areas.
+                      <p className="text-xs text-orange-600">
+                        - Select one spot only (Free until March 31st 2026)
+                        $28/month per each spot
+                      </p>
                     </span>
                   </label>
                   {/* <label className="flex items-center gap-2">
@@ -2457,7 +2458,7 @@ export default function DashboardPage() {
               </label>
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
-                  Business Hours *
+                  Business Hours
                   <p className="text-xs text-orange-600">
                     Please highlight any flexible hours you offer
                   </p>
@@ -2494,7 +2495,10 @@ export default function DashboardPage() {
                       className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
                     <span className="text-sm text-slate-700">
-                      AI Search Tool only ($20/month) -  Do not check (Free until March 31st 2026)
+                      AI Search Tool only ($20/month) -
+                      <p className="text-xs text-orange-600">
+                        Do not check (Free until March 31st 2026)
+                      </p>
                     </span>
                   </label>
                   <label className="flex items-center gap-2">
@@ -2515,9 +2519,12 @@ export default function DashboardPage() {
                     <span className="text-sm text-slate-700">
                       $28/month per spot (optional)
                     </span>
-                    <p className="text-xs text-orange-600">
+                    <p className="text-xs italic">
                       Gain extra visibility on rdumentalhealth.com by featuring
-                      your practice in high-traffic areas.
+                      your practice in high-traffic areas.{" "}
+                      <p className="text-xs text-orange-600">
+                        Do not check (Free until March 31st 2026)
+                      </p>
                     </p>
                   </label>
                   {/* <label className="flex items-center gap-2">
