@@ -2501,7 +2501,7 @@ export default function DashboardPage() {
                       </p>
                     </span>
                   </label>
-                  <label className="flex items-center gap-2">
+                  {/* <label className="flex items-center gap-2">
                     <input
                       type="checkbox"
                       checked={formState.visibility_packages.includes(
@@ -2526,7 +2526,7 @@ export default function DashboardPage() {
                         Do not check (Free until March 31st 2026)
                       </p>
                     </p>
-                  </label>
+                  </label> */}
                   {/* <label className="flex items-center gap-2">
                     <input
                       type="checkbox"
@@ -2551,7 +2551,7 @@ export default function DashboardPage() {
               </label>
 
               {/* Mental Health Condition Field */}
-              <label className="flex flex-col gap-2">
+              {/* <label className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-slate-700">
                   If you selected a CTA spot, which mental health condition
                   would you like to be featured under? Just a heads-up:
@@ -2631,7 +2631,7 @@ export default function DashboardPage() {
                     </label>
                   ))}
                 </div>
-              </label>
+              </label> */}
 
               {/* CTA Message Field */}
               {/* <label className="flex flex-col gap-2">

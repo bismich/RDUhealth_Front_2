@@ -276,7 +276,8 @@ export default function BillingPage() {
       >
         <h2 className="text-2xl font-semibold text-slate-900">Select a plan</h2>
         <div className="grid gap-4 md:grid-cols-2">
-          {["fixed", "cta"].map((plan) => {
+          {/* {["fixed", "cta"].map((plan) => { */}
+          {["fixed"].map((plan) => {
             const isPlanFixed = plan === "fixed";
             const isPlanActive = isPlanFixed && isFixedPlanActive;
             const isDisabled = isPlanFixed && !canSelectFixedPlan;
@@ -325,7 +326,7 @@ export default function BillingPage() {
                     className="h-4 w-4"
                   />
                 </div>
-                {plan === "cta" && selectedPlan === "cta" && (
+                {/* {plan === "cta" && selectedPlan === "cta" && (
                   <div className="flex flex-col gap-2">
                     <label className="text-sm font-medium text-slate-700">
                       CTA Spots (max 4)
@@ -346,7 +347,7 @@ export default function BillingPage() {
                       Maximum 4 CTA spots per subscription
                     </p>
                   </div>
-                )}
+                )} */}
               </label>
             );
           })}
