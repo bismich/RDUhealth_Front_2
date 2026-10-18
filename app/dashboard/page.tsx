@@ -43,6 +43,7 @@ type Practice = {
   visibility_packages: string[];
   mental_health_condition: string[];
   cta_message: string;
+  availability_requested_at: string | null;
   public_token: string;
   embedding?: {
     updated_at?: string;
@@ -785,6 +786,14 @@ export default function DashboardPage() {
           <p className="mt-4 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-xs font-medium text-blue-600 shadow-sm">
             <span className="h-2 w-2 rounded-full bg-blue-500" />
             {limitNotice}
+          </p>
+        )}
+        {practices.some((practice) => practice.availability_requested_at) && (
+          <p className="mt-4 inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-4 py-2 text-xs font-medium text-amber-700 shadow-sm">
+            <span className="h-2 w-2 animate-pulse rounded-full bg-amber-400" />
+            Your listing is hidden from search until you confirm availability:
+            click Yes in our check-in email, or review and save your practice
+            details below.
           </p>
         )}
       </header>

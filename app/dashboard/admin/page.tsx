@@ -6,6 +6,8 @@ import Link from "next/link";
 
 import { useAppSelector } from "@/store/hooks";
 
+import AvailabilityEmailSettings from "./AvailabilityEmailSettings";
+
 // Simple Line Graph Component
 function LineGraph({
   data,
@@ -515,6 +517,10 @@ export default function AdminDashboardPage() {
             </div>
           </div>
         </section>
+      )}
+
+      {canQuery && accessToken && (
+        <AvailabilityEmailSettings baseUrl={baseUrl} accessToken={accessToken} />
       )}
 
       {/* Quick Actions */}

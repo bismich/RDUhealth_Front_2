@@ -56,6 +56,7 @@ function AdminDropdown({ pathname }: { pathname: string }) {
       icon: "💳",
     },
     { href: "/dashboard/admin/practices", label: "Practices", icon: "🏥" },
+    { href: "/dashboard/admin/availability", label: "Availability", icon: "📅" },
     {
       href: "/dashboard/admin/chat-sessions",
       label: "Chat Sessions",

@@ -117,8 +117,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         setSessionState(null);
         dispatch(clearSession());
-        // Clear all SWR cache when user logs out
-        mutate(() => true, undefined, { revalidate: false });
+        // Clear all SWR cache when user logs out. Not on INITIAL_SESSION (logged-out page load): nothing from a
+        // previous session is cached yet, and the wipe discards in-flight useSWR requests, leaving them stuck loading
+        if (event === "SIGNED_OUT") {
+          mutate(() => true, undefined, { revalidate: false });
+        }
       }
 
       setIsLoading(false);
