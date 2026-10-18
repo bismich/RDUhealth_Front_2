@@ -20,7 +20,13 @@ export default function SignupPage() {
     setLoading(true);
     setError(null);
     const supabase = createSupabaseClient();
-    const { error } = await supabase.auth.signUp({ email, password });
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      // Bring the verification link back to this site: its one-time code only works where signup started.
+      // The origin must be in Supabase > Authentication > URL Configuration > Redirect URLs.
+      options: { emailRedirectTo: `${window.location.origin}/login` },
+    });
     if (error) {
       setError(error.message);
       setLoading(false);
